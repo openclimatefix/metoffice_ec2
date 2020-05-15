@@ -1,0 +1,13 @@
+name: nwp_subset
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - numcodecs
+  - zarr
+  - pytest
+  - pandas
+  - matplotlib
+  - xarray
+  - s3fs
+  - boto3
