@@ -12,17 +12,25 @@ py.test -s
 
 If `boto3` is setup to access AWS, then you can run `scripts/ec2.py` from your local machine to test (although it'll try to pull large amounts of data into & out of S3, so this will get expensive quickly!)
 
+## Build & test Docker container locally
+
+[Install Docker](https://docs.docker.com/engine/install/).
+
+```
+docker build .
+docker run -e AWS_ACCESS_KEY_ID=<ID> -e AWS_SECRET_ACCESS_KEY=<KEY> <DockerImage>
+```
 
 # Install on AWS
 
 ## Configure AWS permissions
 
-Go to the AWS Identity and Access Management (IAM) console, and attach policy `AWSLambdaSQSQueueExecutionRole`... *TODO*
+Go to the AWS Identity and Access Management (IAM) console... *TODO*
 
 
 ### Create bucket for storing NWPs
 
-Create a bucket for storing subsetted NWPs.  Set the DEST_BUCKET constant in `scripts/ec2.py`
+Create a bucket for storing subsetted NWPs.  Set the `DEST_BUCKET` constant in `scripts/ec2.py`
 
 
 ## Configure AWS Simple Queue Service (SQS)
