@@ -10,6 +10,9 @@ pip install -e .
 py.test -s
 ```
 
+If `boto3` is setup to access AWS, then you can run `scripts/ec2.py` from your local machine to test (although it'll try to pull large amounts of data into & out of S3, so this will get expensive quickly!)
+
+
 # Install on AWS
 
 ## Configure AWS permissions
@@ -19,23 +22,37 @@ Go to the AWS Identity and Access Management (IAM) console, and attach policy `A
 
 ### Create bucket for storing NWPs
 
-Create a bucket called `metoffice-nwp`.
+Create a bucket for storing subsetted NWPs.  Set the DEST_BUCKET constant in `scripts/ec2.py`
 
 
 ## Configure AWS Simple Queue Service (SQS)
 
-When the Met Office uploads new NWPs to S3, they also send a message to an AWS Simple Notification Service topic.  It is possible to trigger lambda functions directly from SNS notifications.  However, this results in the lambda function sometimes triggering too soon.  This often means the lambda function will take a long time (300 seconds) to download the NetCDF file from S3; and sometimes means the lambda function cannot find the NetCDF file at all.
+When the Met Office uploads new NWPs to S3, they also send a message to an AWS Simple Notification Service topic.  These notifications must be received as soon as they're produced.  But our EC2 job isn't kept running 24/7.  Our EC2 job is triggered once an hour.  So we need a way to capture the SNS notifications when our EC2 job is offline.
 
-A solution is to set up a Simple Queue Service, and the the SQS to delay messages a little, to ensure that the NetCDF files are ready and waiting on S3 by the time our lambda function triggers.
+A solution is to set up an AWS Simple Queue Service.  Set up SQS as per the [Met Office's instructions](https://github.com/MetOffice/aws-earth-examples/blob/master/examples/2.%20Subscribing%20to%20data.ipynb).
 
-Set up SQS as per the [Met Office's instructions](https://github.com/MetOffice/aws-earth-examples/blob/master/examples/2.%20Subscribing%20to%20data.ipynb).
-
-Additionally, set these config options on the queue:
-
-* Delivery Delay = 15 minutes (to allow time for each NetCDF file to replicate across S3)
-
+Then set the `SQS_URL` in `scripts/ec2.py`
 
 ## Configure EC2 instance
 
 
 ### Configure EC2 instance to trigger every hour
+
+
+# Software development
+
+This code follows the [Google Python Style Guide](http://google.github.io/styleguide/pyguide.html).
+
+The included `environment.yml` file includes just the packages required to run the script
+and unit tests.
+
+To do development, please run this command within the `metoffice_ec2` conda environment:
+
+`conda install flake8 jedi mypy`
+
+Run static type checking with `mypy --ignore-missing-imports --follow-imports=silent *.py`
+in the `metoffice_ec2/` directory.
+
+Check coding style with `flake8`
+
+`jedi` is for auto-completion (and other things) in IDEs.

@@ -1,17 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from metoffice_ec2 import message, subset
 from metoffice_ec2.timer import Timer
 import s3fs
-import xarray as xr
 import boto3
 import logging
-import io
 
-SQS_URL = 'https://sqs.eu-west-2.amazonaws.com/144427043691/mogreps-uk-and-ukv'
+SQS_URL = 'https://sqs.eu-west-1.amazonaws.com/741607616921/uk-metoffice-nwp'
 
-REGION = 'eu-west-2'
+REGION = 'eu-west-1'
 
-DEST_BUCKET = 'metoffice-nwp'
+DEST_BUCKET = 'uk-metoffice-nwp'
 
 PARAMS_TO_COPY = [
     'wind_speed',
@@ -67,6 +65,12 @@ def load_subset_and_save_data(mo_message, s3):
         _LOG.info('SUCCESS! dest_url=%s', full_zarr_filename)
 
 
+def delete_message(sqs, sqs_message):
+    receipt_handle = sqs_message['ReceiptHandle']
+    _LOG.info('Deleting message with ReceiptHandle=' + receipt_handle)
+    sqs.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
+
+
 def main():
     sqs = boto3.client('sqs', region_name=REGION)
     s3 = s3fs.S3FileSystem(default_fill_cache=False, default_cache_type='none')
@@ -79,7 +83,7 @@ def main():
         num_messages = len(sqs_messages)
         _LOG.debug('{:d} sqs messages received'.format(num_messages))
         if not sqs_messages:
-            _LOG.debug('No more SQS messages!')
+            _LOG.info('No more SQS messages!')
             break
 
         for i, sqs_message in enumerate(sqs_messages):
@@ -87,24 +91,17 @@ def main():
             _LOG.info(
                 'Loading SQS message %d/%d: %s', i+1, num_messages, mo_message)
 
-            delete_message = True
             if mo_message.is_wanted(PARAMS_TO_COPY):
                 _LOG.info('Message is wanted!  Loading NetCDF file...')
                 try:
                     load_subset_and_save_data(mo_message, s3)
                 except Exception as e:
                     _LOG.exception(e)
-                    delete_message = False
+                else:
+                    delete_message(sqs, sqs_message)
             else:
                 _LOG.info('Message not wanted.')
-
-            if delete_message:
-                receipt_handle = sqs_message['ReceiptHandle']
-                _LOG.info(
-                    'Deleting message with ReceiptHandle=' + receipt_handle)
-                sqs.delete_message(
-                    QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
-
+                delete_message(sqs, sqs_message)
 
 
 if __name__ == '__main__':
