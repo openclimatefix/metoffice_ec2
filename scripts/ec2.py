@@ -1,6 +1,6 @@
 #!/usr/bin/python
-from nwp_subset import message, subset
-from nwp_subset.timer import Timer
+from metoffice_ec2 import message, subset
+from metoffice_ec2.timer import Timer
 import s3fs
 import xarray as xr
 import boto3
@@ -30,7 +30,7 @@ SUBSET_PARAMS = {
 
 
 def configure_logger():
-    log = logging.getLogger('nwp_subset')
+    log = logging.getLogger('metoffice_ec2')
     log.setLevel(logging.DEBUG)
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.DEBUG)

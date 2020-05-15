@@ -2,7 +2,7 @@ import time
 import logging
 
 
-_LOG = logging.getLogger('nwp_subset')
+_LOG = logging.getLogger('metoffice_ec2')
 
 
 class Timer:

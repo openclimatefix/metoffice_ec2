@@ -1,12 +1,20 @@
 Extract specific parts of the [UK Met Office's UKV and MOGREPS-UK numerical weather predictions from AWS](https://registry.opendata.aws/uk-met-office/), compress, and save to S3 as Zarr.  Intended to run on AWS EC2.
 
 
-## Install & test locally
+# Install & test locally
 
+```
+conda env create -f environment.yml 
+conda activate metoffice_ec2
+pip install -e .
+py.test -s
+```
+
+# Install on AWS
 
 ## Configure AWS permissions
 
-Go to the AWS Identity and Access Management (IAM) console, and attach policy `AWSLambdaSQSQueueExecutionRole` to the role for the metoffice-aws-lambda function.
+Go to the AWS Identity and Access Management (IAM) console, and attach policy `AWSLambdaSQSQueueExecutionRole`... *TODO*
 
 
 ### Create bucket for storing NWPs
@@ -28,8 +36,6 @@ Additionally, set these config options on the queue:
 
 
 ## Configure EC2 instance
-
-
 
 
 ### Configure EC2 instance to trigger every hour

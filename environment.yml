@@ -1,4 +1,4 @@
-name: nwp_subset
+name: metoffice_ec2
 channels:
   - conda-forge
 dependencies:
