@@ -1,0 +1,7 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "projection_x_coordinate",
+        "bnds"
+    ],
+    "coordinates": "forecast_reference_time time forecast_period"
+}

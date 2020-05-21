@@ -11,3 +11,5 @@ dependencies:
   - xarray
   - s3fs
   - boto3
+  - cartopy
+  - dask[array]

@@ -1,0 +1,9 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "projection_y_coordinate"
+    ],
+    "axis": "Y",
+    "bounds": "projection_y_coordinate_bnds",
+    "standard_name": "projection_y_coordinate",
+    "units": "m"
+}

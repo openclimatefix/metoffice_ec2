@@ -1,0 +1,12 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "realization",
+        "height",
+        "projection_y_coordinate",
+        "projection_x_coordinate"
+    ],
+    "coordinates": "forecast_period forecast_reference_time time",
+    "grid_mapping": "lambert_azimuthal_equal_area",
+    "standard_name": "wind_from_direction",
+    "units": "degrees"
+}

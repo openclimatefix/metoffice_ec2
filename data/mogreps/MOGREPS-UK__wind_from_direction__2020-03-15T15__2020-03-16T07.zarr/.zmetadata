@@ -1,0 +1,326 @@
+{
+    "metadata": {
+        ".zattrs": {
+            "Conventions": "CF-1.5, UKMO-1.0",
+            "history": "2020-03-15T17:03:09Z: StaGE Decoupler",
+            "institution": "Met Office",
+            "least_significant_digit": [
+                1.0
+            ],
+            "mosg__forecast_run_duration": "PT126H",
+            "mosg__grid_domain": "uk_extended",
+            "mosg__grid_type": "standard",
+            "mosg__grid_version": "2.2.0",
+            "mosg__model_configuration": "uk_ens",
+            "source": "Met Office Unified Model",
+            "title": "MOGREPS-UK Model Forecast on UK 2 km Standard Grid",
+            "um_version": "11.2"
+        },
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "forecast_period/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<i4",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "forecast_period/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "standard_name": "forecast_period",
+            "units": "seconds"
+        },
+        "forecast_reference_time/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "forecast_reference_time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "calendar": "gregorian",
+            "standard_name": "forecast_reference_time",
+            "units": "seconds since 1970-01-01"
+        },
+        "height/.zarray": {
+            "chunks": [
+                4
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                4
+            ],
+            "zarr_format": 2
+        },
+        "height/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "height"
+            ],
+            "axis": "Z",
+            "positive": "up",
+            "standard_name": "height",
+            "units": "m"
+        },
+        "lambert_azimuthal_equal_area/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<i4",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "lambert_azimuthal_equal_area/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "coordinates": "forecast_reference_time time forecast_period",
+            "false_easting": [
+                0.0
+            ],
+            "false_northing": [
+                0.0
+            ],
+            "grid_mapping_name": "lambert_azimuthal_equal_area",
+            "latitude_of_projection_origin": [
+                54.9
+            ],
+            "longitude_of_prime_meridian": [
+                0.0
+            ],
+            "longitude_of_projection_origin": [
+                -2.5
+            ],
+            "semi_major_axis": [
+                6378137.0
+            ],
+            "semi_minor_axis": [
+                6356752.314140356
+            ]
+        },
+        "projection_x_coordinate/.zarray": {
+            "chunks": [
+                553
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                553
+            ],
+            "zarr_format": 2
+        },
+        "projection_x_coordinate/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "projection_x_coordinate"
+            ],
+            "axis": "X",
+            "bounds": "projection_x_coordinate_bnds",
+            "standard_name": "projection_x_coordinate",
+            "units": "m"
+        },
+        "projection_x_coordinate_bnds/.zarray": {
+            "chunks": [
+                553,
+                2
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                553,
+                2
+            ],
+            "zarr_format": 2
+        },
+        "projection_x_coordinate_bnds/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "projection_x_coordinate",
+                "bnds"
+            ],
+            "coordinates": "forecast_reference_time time forecast_period"
+        },
+        "projection_y_coordinate/.zarray": {
+            "chunks": [
+                706
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                706
+            ],
+            "zarr_format": 2
+        },
+        "projection_y_coordinate/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "projection_y_coordinate"
+            ],
+            "axis": "Y",
+            "bounds": "projection_y_coordinate_bnds",
+            "standard_name": "projection_y_coordinate",
+            "units": "m"
+        },
+        "projection_y_coordinate_bnds/.zarray": {
+            "chunks": [
+                706,
+                2
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                706,
+                2
+            ],
+            "zarr_format": 2
+        },
+        "projection_y_coordinate_bnds/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "projection_y_coordinate",
+                "bnds"
+            ],
+            "coordinates": "forecast_reference_time time forecast_period"
+        },
+        "realization/.zarray": {
+            "chunks": [
+                3
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i4",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                3
+            ],
+            "zarr_format": 2
+        },
+        "realization/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "realization"
+            ],
+            "standard_name": "realization",
+            "units": "1"
+        },
+        "time/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "calendar": "gregorian",
+            "standard_name": "time",
+            "units": "seconds since 1970-01-01"
+        },
+        "wind_from_direction/.zarray": {
+            "chunks": [
+                1,
+                2,
+                353,
+                277
+            ],
+            "compressor": {
+                "check": -1,
+                "filters": [
+                    {
+                        "dist": 4,
+                        "id": 3
+                    },
+                    {
+                        "id": 33,
+                        "preset": 9
+                    }
+                ],
+                "format": 3,
+                "id": "lzma",
+                "preset": null
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                3,
+                4,
+                706,
+                553
+            ],
+            "zarr_format": 2
+        },
+        "wind_from_direction/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "realization",
+                "height",
+                "projection_y_coordinate",
+                "projection_x_coordinate"
+            ],
+            "coordinates": "forecast_period forecast_reference_time time",
+            "grid_mapping": "lambert_azimuthal_equal_area",
+            "standard_name": "wind_from_direction",
+            "units": "degrees"
+        }
+    },
+    "zarr_consolidated_format": 1
+}
