@@ -1,0 +1,28 @@
+@startuml
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v7.0/dist
+!includeurl AWSPuml/AWSCommon.puml
+
+' Uncomment the following line to create simplified view
+' !includeurl AWSPuml/AWSSimplified.puml
+
+!includeurl AWSPuml/ApplicationIntegration/SQS.puml
+!includeurl AWSPuml/ApplicationIntegration/SNS.puml
+!includeurl AWSPuml/Compute/ECSContainer2.puml
+!includeurl AWSPuml/Storage/S3Bucket.puml
+
+left to right direction
+
+SNS(mettopic1, "Topic: UK UKV", "aws-earth-mo-atmospheric-ukv-prd")
+SNS(mettopic2, "Topic: UK MOGREPS", "aws-earth-mo-atmospheric-mogreps-uk-prd")
+SQS(queue, "Metoffice Receiver", "metoffice_ec2_receiver")
+ECSContainer2(script, "ec2.py", "Script")
+S3Bucket(output, "Output", "ocf-uk-metoffice-nwp")
+
+
+mettopic1 --> queue
+mettopic2 --> queue
+queue --> script
+script --> output
+
+@enduml
