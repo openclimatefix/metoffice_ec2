@@ -23,9 +23,12 @@ docker run -e AWS_ACCESS_KEY_ID=<ID> -e AWS_SECRET_ACCESS_KEY=<KEY> <DockerImage
 
 # Install on AWS
 
-![image info](./infrastructure/infra.png)
+![Architecture Diagram](./infrastructure/infra.png)
 
 A Terraform template is provided in `/infrastructure`.
+A [Docker Image](https://hub.docker.com/r/openclimatefix/metoffice_ec2) is also provided publicly.
+
+[> More Information about Infrastructure](./infrastructure/README.md)
 
 The following environment variables must be provided:
 | Name          | Type     | Description                                            |
