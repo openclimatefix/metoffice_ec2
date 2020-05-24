@@ -11,3 +11,4 @@ dependencies:
   - xarray
   - s3fs
   - boto3
+  - h5netcdf
