@@ -14,7 +14,7 @@ If `boto3` is setup to access AWS, then you can run `scripts/ec2.py` from your l
 
 ## Build & test Docker container locally
 
-[Install Docker](https://docs.docker.com/engine/install/).
+[Install Docker](https://docs.docker.com/engine/install/)
 
 ```
 docker build .
@@ -23,6 +23,22 @@ docker run -e AWS_ACCESS_KEY_ID=<ID> -e AWS_SECRET_ACCESS_KEY=<KEY> <DockerImage
 
 # Install on AWS
 
+![Architecture Diagram](./infrastructure/infra.png)
+
+A Terraform template is provided in `/infrastructure`.
+A [Docker Image](https://hub.docker.com/r/openclimatefix/metoffice_ec2) is also provided publicly.
+
+[> More Information about Infrastructure](./infrastructure/README.md)
+
+The following environment variables must be provided:
+| Name          | Type     | Description                                            |
+| ------------- | -------- | ------------------------------------------------------ |
+| `SQS_URL`     | `String` | The URL of the SQS that the Messages are consumed from |
+| `DEST_BUCKET` | `String` | S3 bucket that the finished output should be stored in |
+
+<details>
+    <summary>Manual Setup</summary>
+
 ## Configure AWS permissions
 
 Go to the AWS Identity and Access Management (IAM) console... *TODO*
@@ -30,7 +46,7 @@ Go to the AWS Identity and Access Management (IAM) console... *TODO*
 
 ### Create bucket for storing NWPs
 
-Create a bucket for storing subsetted NWPs.  Set the `DEST_BUCKET` constant in `scripts/ec2.py`
+Create a bucket for storing subsetted NWPs. Set the `DEST_BUCKET` constant in `scripts/ec2.py`
 
 
 ## Configure AWS Simple Queue Service (SQS)
@@ -45,9 +61,10 @@ Then set the `SQS_URL` in `scripts/ec2.py`
 
 
 ### Configure EC2 instance to trigger every hour
+</details>
 
 
-# Software development
+# Software Development
 
 This code follows the [Google Python Style Guide](http://google.github.io/styleguide/pyguide.html).
 

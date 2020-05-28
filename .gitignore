@@ -245,3 +245,12 @@ $RECYCLE.BIN/
 
 .aws-sam
 samconfig.toml
+
+# Compiled files
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+
+# Directories
+.terraform/

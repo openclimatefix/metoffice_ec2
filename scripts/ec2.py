@@ -4,17 +4,24 @@ from metoffice_ec2.timer import Timer
 import s3fs
 import boto3
 import logging
+import os
+import sys
+import time
 
-SQS_URL = 'https://sqs.eu-west-1.amazonaws.com/741607616921/uk-metoffice-nwp'
+SQS_URL_DEFAULT = 'https://sqs.eu-west-1.amazonaws.com/741607616921/uk-metoffice-nwp'
+SQS_URL = os.getenv('SQS_URL', SQS_URL_DEFAULT)
+
+DEST_BUCKET_DEFAULT = 'uk-metoffice-nwp'
+DEST_BUCKET = os.getenv('DEST_BUCKET', SQS_URL_DEFAULT)
 
 REGION = 'eu-west-1'
 
-DEST_BUCKET = 'uk-metoffice-nwp'
-
+# Remember to update infrastructure/inputs.tf as well, when modifying this
 PARAMS_TO_COPY = [
     'wind_speed',
     'wind_speed_of_gust',
-    'wind_from_direction']
+    'wind_from_direction'
+]
 
 SUBSET_PARAMS = {
     'height_meters': [10, 50, 100, 150],
@@ -76,15 +83,20 @@ def main():
     s3 = s3fs.S3FileSystem(default_fill_cache=False, default_cache_type='none')
     while True:
         sqs_reply = sqs.receive_message(
+            WaitTimeSeconds=60,
             QueueUrl=SQS_URL, MaxNumberOfMessages=10,
             AttributeNames=['ApproximateReceiveCount', 'SentTimestamp'])
+        
+        if 'Messages' not in sqs_reply:
+            _LOG.info('No more SQS messages!')
+            continue
 
         sqs_messages = sqs_reply['Messages']
         num_messages = len(sqs_messages)
         _LOG.debug('{:d} sqs messages received'.format(num_messages))
         if not sqs_messages:
             _LOG.info('No more SQS messages!')
-            break
+            continue
 
         for i, sqs_message in enumerate(sqs_messages):
             mo_message = message.MetOfficeMessage(sqs_message)
@@ -93,12 +105,16 @@ def main():
 
             if mo_message.is_wanted(PARAMS_TO_COPY):
                 _LOG.info('Message is wanted!  Loading NetCDF file...')
+                time_start = time.time()
                 try:
                     load_subset_and_save_data(mo_message, s3)
                 except Exception as e:
                     _LOG.exception(e)
                 else:
                     delete_message(sqs, sqs_message)
+                
+                time_end = time.time()
+                _LOG.info('Took %d seconds', time_end-time_start)
             else:
                 _LOG.info('Message not wanted.')
                 delete_message(sqs, sqs_message)
