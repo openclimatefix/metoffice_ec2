@@ -16,6 +16,7 @@ DEST_BUCKET = os.getenv('DEST_BUCKET', SQS_URL_DEFAULT)
 
 REGION = 'eu-west-1'
 
+# Remember to update infrastructure/inputs.tf as well, when modifying this
 PARAMS_TO_COPY = [
     'wind_speed',
     'wind_speed_of_gust',
@@ -82,6 +83,7 @@ def main():
     s3 = s3fs.S3FileSystem(default_fill_cache=False, default_cache_type='none')
     while True:
         sqs_reply = sqs.receive_message(
+            WaitTimeSeconds=60,
             QueueUrl=SQS_URL, MaxNumberOfMessages=10,
             AttributeNames=['ApproximateReceiveCount', 'SentTimestamp'])
         
