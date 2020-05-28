@@ -70,7 +70,7 @@ class MetOfficeMessage:
             Key=self.message['key'])
         netcdf_bytes = get_obj_response['Body'].read()
         netcdf_bytes_io = io.BytesIO(netcdf_bytes)
-        return xr.open_dataset(netcdf_bytes_io, engine='h5netcdf')
+        return xr.open_dataset(netcdf_bytes_io)
 
     def object_size_mb(self) -> float:
         """Return the object size in megabytes."""
