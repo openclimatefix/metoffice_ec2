@@ -77,47 +77,47 @@ def delete_message(sqs, sqs_message):
     sqs.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
 
 
-def main():
+def loop():
     sqs = boto3.client('sqs', region_name=REGION)
+    sqs_reply = sqs.receive_message(
+        WaitTimeSeconds=60,
+        QueueUrl=SQS_URL, MaxNumberOfMessages=10,
+        AttributeNames=['ApproximateReceiveCount', 'SentTimestamp'])
+
+    if 'Messages' not in sqs_reply:
+        _LOG.info('No more SQS messages!')
+        return
+
+    sqs_messages = sqs_reply['Messages']
+    num_messages = len(sqs_messages)
+    _LOG.debug('{:d} sqs messages received'.format(num_messages))
+    if not sqs_messages:
+        _LOG.info('No more SQS messages!')
+        return
+
     s3 = s3fs.S3FileSystem(default_fill_cache=False, default_cache_type='none')
-    while True:
-        sqs_reply = sqs.receive_message(
-            WaitTimeSeconds=60,
-            QueueUrl=SQS_URL, MaxNumberOfMessages=10,
-            AttributeNames=['ApproximateReceiveCount', 'SentTimestamp'])
+    for i, sqs_message in enumerate(sqs_messages):
+        mo_message = message.MetOfficeMessage(sqs_message)
+        _LOG.info(
+            'Loading SQS message %d/%d: %s', i+1, num_messages, mo_message)
 
-        if 'Messages' not in sqs_reply:
-            _LOG.info('No more SQS messages!')
-            continue
-
-        sqs_messages = sqs_reply['Messages']
-        num_messages = len(sqs_messages)
-        _LOG.debug('{:d} sqs messages received'.format(num_messages))
-        if not sqs_messages:
-            _LOG.info('No more SQS messages!')
-            continue
-
-        for i, sqs_message in enumerate(sqs_messages):
-            mo_message = message.MetOfficeMessage(sqs_message)
-            _LOG.info(
-                'Loading SQS message %d/%d: %s', i+1, num_messages, mo_message)
-
-            if mo_message.is_wanted(PARAMS_TO_COPY):
-                _LOG.info('Message is wanted!  Loading NetCDF file...')
-                time_start = time.time()
-                try:
-                    load_subset_and_save_data(mo_message, s3)
-                except Exception as e:
-                    _LOG.exception(e)
-                else:
-                    delete_message(sqs, sqs_message)
-
-                time_end = time.time()
-                _LOG.info('Took %d seconds', time_end-time_start)
+        if mo_message.is_wanted(PARAMS_TO_COPY):
+            _LOG.info('Message is wanted!  Loading NetCDF file...')
+            time_start = time.time()
+            try:
+                load_subset_and_save_data(mo_message, s3)
+            except Exception as e:
+                _LOG.exception(e)
             else:
-                _LOG.info('Message not wanted.')
                 delete_message(sqs, sqs_message)
+
+            time_end = time.time()
+            _LOG.info('Took %d seconds', time_end-time_start)
+        else:
+            _LOG.info('Message not wanted.')
+            delete_message(sqs, sqs_message)
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        loop()
