@@ -78,6 +78,8 @@ def delete_message(sqs, sqs_message):
 
 
 def loop():
+    # Re-create `sqs` and `s3` objects on every loop iteration
+    # to prevent the script from using ever-increasing amounts of RAM!
     sqs = boto3.client('sqs', region_name=REGION)
     sqs_reply = sqs.receive_message(
         WaitTimeSeconds=60,
