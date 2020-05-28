@@ -9,6 +9,8 @@ import boto3
 
 
 class MetOfficeMessage:
+    """Represents the MetOffice-specific portion of the SNS message."""
+
     def __init__(self, sqs_message: Dict):
         """
         Args:
@@ -33,17 +35,19 @@ class MetOfficeMessage:
         return int(attributes['ApproximateReceiveCount'])
 
     def is_multi_level(self):
+        """Return True if this message is about an NWP with multiple
+        vertical levels."""
         return 'height' in self.message and ' ' in self.message['height']
 
     def is_wanted(
-            self, nwp_params: List[str], max_receive_count: int=10) -> bool:
+            self, nwp_params: List[str], max_receive_count: int = 10) -> bool:
         """Returns True if this message describes an NWP we want.
+
         Args:
           nwp_params: The Numerical Weather Prediction parameters we want.
-          max_receive_count: If this message has been received more than 
+          max_receive_count: If this message has been received more than
             `max_receive_count` times, then we don't want this message.
         """
-
         var_name = self.message['name']
         is_multi_level = self.is_multi_level()
         approx_receive_count = self.sqs_approx_receive_count()
@@ -53,11 +57,13 @@ class MetOfficeMessage:
             approx_receive_count < max_receive_count)
 
     def source_url(self) -> str:
+        """Return the URL for the NetCDF file described by this message."""
         source_bucket = self.message['bucket']
         source_key = self.message['key']
         return os.path.join(source_bucket, source_key)
 
     def load_netcdf(self) -> xr.Dataset:
+        """Opens the NetCDF described by this message."""
         boto_s3 = boto3.client('s3')
         get_obj_response = boto_s3.get_object(
             Bucket=self.message['bucket'],
@@ -67,6 +73,7 @@ class MetOfficeMessage:
         return xr.open_dataset(netcdf_bytes_io, engine='h5netcdf')
 
     def object_size_mb(self) -> float:
+        """Return the object size in megabytes."""
         return self.message['object_size'] / 1E6
 
     def __repr__(self) -> str:
