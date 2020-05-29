@@ -1,5 +1,8 @@
 # Use the official image as a parent image.
-FROM frolvlad/alpine-miniconda3
+FROM continuumio/miniconda3
+
+# Make logs show up immediately, not only after loop finishes
+ENV PYTHONUNBUFFERED 1
 
 # Set the working directory.
 WORKDIR /usr/src/app
@@ -15,7 +18,10 @@ RUN conda env create -f environment.yml
 
 # Make RUN commands use the new environment:
 # From https://pythonspeed.com/articles/activate-conda-dockerfile/
-SHELL ["conda", "run", "-n", "metoffice_ec2", "/bin/sh", "-c"]
+# SHELL ["conda", "run", "-n", "metoffice_ec2", "/bin/bash", "-c"]
+
+# Make sure python uses the right venv
+ENV PATH /opt/conda/envs/metoffice_ec2/bin:$PATH
 
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
@@ -24,4 +30,4 @@ COPY . .
 RUN pip install -e .
 
 # Run the specified command within the container.
-CMD [ "conda", "run", "-n", "metoffice_ec2", "python", "scripts/ec2.py" ]
+CMD [ "python", "-u", "scripts/ec2.py" ]
