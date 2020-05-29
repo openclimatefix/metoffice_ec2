@@ -26,7 +26,12 @@ variable "sns_filter_policy" {
     name = [
       "wind_speed",
       "wind_speed_of_gust",
-      "wind_from_direction"
+      "wind_from_direction",
+      "air_temperature",
+      "surface_diffusive_downwelling_shortwave_flux_in_air",
+      "surface_direct_downwelling_shortwave_flux_in_air",
+      "surface_downwelling_shortwave_flux_in_air",
+      "surface_temperature"
     ]
   }
 }
