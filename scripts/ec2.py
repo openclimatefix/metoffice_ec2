@@ -125,5 +125,6 @@ def loop():
 
 
 if __name__ == '__main__':
+    _LOG.info('Starting scripts/ec2.py loop...')
     while True:
         loop()
