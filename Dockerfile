@@ -1,5 +1,5 @@
 # Use the official image as a parent image.
-FROM continuumio/miniconda3
+FROM frolvlad/alpine-miniconda3
 
 # Set the working directory.
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ RUN conda env create -f environment.yml
 
 # Make RUN commands use the new environment:
 # From https://pythonspeed.com/articles/activate-conda-dockerfile/
-SHELL ["conda", "run", "-n", "metoffice_ec2", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "metoffice_ec2", "/bin/sh", "-c"]
 
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
