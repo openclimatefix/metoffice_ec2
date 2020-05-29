@@ -20,7 +20,7 @@ variable "sqs_message_retention_seconds" {
 
 variable "docker_image_version" {
   type    = string
-  default = "1.1.0"
+  default = "1.1.1"
 }
 
 variable "sns_filter_policy" {
