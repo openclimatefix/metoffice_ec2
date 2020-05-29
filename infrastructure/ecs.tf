@@ -47,7 +47,7 @@ resource "aws_iam_policy" "metoffice_task_policy" {
             ]
         },
         {
-            "Sid": "s3_bucket",
+            "Sid": "s3bucket",
             "Effect": "Allow",
             "Action": [
                 "s3:ListBucket"
@@ -57,7 +57,7 @@ resource "aws_iam_policy" "metoffice_task_policy" {
             ]
         },
         {
-            "Sid": "s3_files",
+            "Sid": "s3files",
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject",
