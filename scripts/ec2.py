@@ -86,7 +86,7 @@ def loop():
     # to prevent the script from using ever-increasing amounts of RAM!
     sqs = boto3.client('sqs', region_name=REGION)
     sqs_reply = sqs.receive_message(
-        WaitTimeSeconds=60,
+        WaitTimeSeconds=20,
         QueueUrl=SQS_URL, MaxNumberOfMessages=10,
         AttributeNames=['ApproximateReceiveCount', 'SentTimestamp'])
 
