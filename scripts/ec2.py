@@ -19,8 +19,12 @@ REGION = 'eu-west-1'
 PARAMS_TO_COPY = [
     'wind_speed',
     'wind_speed_of_gust',
-    'wind_from_direction'
-]
+    'wind_from_direction',
+    'air_temperature',
+    'surface_diffusive_downwelling_shortwave_flux_in_air',
+    'surface_direct_downwelling_shortwave_flux_in_air',
+    'surface_downwelling_shortwave_flux_in_air',
+    'surface_temperature']
 
 SUBSET_PARAMS = {
     'height_meters': [10, 50, 100, 150],
