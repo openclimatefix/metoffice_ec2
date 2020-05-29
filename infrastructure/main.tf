@@ -13,14 +13,12 @@ terraform {
 provider "aws" {
   version = "~> 2.0"
   region  = "eu-west-1"
-  profile = "ocfflo"
 }
 
 # Additional provider configuration for London region
 provider "aws" {
   alias   = "london"
   region  = "eu-west-2"
-  profile = "ocfflo"
 }
 
 locals {
