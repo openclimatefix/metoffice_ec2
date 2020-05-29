@@ -13,3 +13,4 @@ dependencies:
   - boto3
   - cartopy
   - dask[array]
+  - h5netcdf
