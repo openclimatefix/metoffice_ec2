@@ -101,14 +101,22 @@ resource "aws_ecs_task_definition" "metoffice_task" {
     "name": "main",
     "image": "openclimatefix/metoffice_ec2:${var.docker_image_version}",
     "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "metoffice_ec2",
+        "awslogs-region": "eu-west-1",
+        "awslogs-stream-prefix": "main"
+      }
+    },
     "environment": [{
-            "name": "DEST_BUCKET",
-            "value": "${aws_s3_bucket.output.bucket}"
-        },
-        {
-            "name": "SQS_URL",
-            "value": "${aws_sqs_queue.metqueue.id}"
-        }
+        "name": "DEST_BUCKET",
+        "value": "${aws_s3_bucket.output.bucket}"
+      },
+      {
+        "name": "SQS_URL",
+        "value": "${aws_sqs_queue.metqueue.id}"
+      }
     ]
 }]
 JSON

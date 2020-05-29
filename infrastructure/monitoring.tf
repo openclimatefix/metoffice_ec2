@@ -1,3 +1,10 @@
+resource "aws_cloudwatch_log_group" "main" {
+  name = "metoffice_ec2"
+
+  tags = local.common_tags
+}
+
+
 resource "aws_cloudwatch_dashboard" "dash" {
   dashboard_name = "metoffice_ec2_dashboard"
 
