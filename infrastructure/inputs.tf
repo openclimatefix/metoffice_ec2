@@ -18,6 +18,11 @@ variable "sqs_message_retention_seconds" {
   default = 5400 # 90 Minutes
 }
 
+variable "docker_image_version" {
+  type    = string
+  default = "latest"
+}
+
 variable "sns_filter_policy" {
   type = object({
     name = list(string)

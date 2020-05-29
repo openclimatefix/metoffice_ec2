@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "metoffice_task" {
   container_definitions = <<JSON
 [{
     "name": "main",
-    "image": "openclimatefix/metoffice_ec2",
+    "image": "openclimatefix/metoffice_ec2:${var.docker_image_version}",
     "essential": true,
     "environment": [{
             "name": "DEST_BUCKET",
