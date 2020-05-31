@@ -77,6 +77,42 @@ resource "aws_iam_role_policy_attachment" "metoffice_task_role_policy_attachment
   policy_arn = aws_iam_policy.metoffice_task_policy.arn
 }
 
+resource "aws_iam_policy" "metoffice_task_policy_read_metoffice" {
+  name = "metoffice_ec2_task_role_policy_read_metoffice"
+  description = "Allows read access to external MetOffice S3 bucket"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ListObjectsInBucket",
+            "Effect": "Allow",
+            "Action": ["s3:ListBucket"],
+            "Resource": [
+              "arn:aws:s3:::aws-earth-mo-atmospheric-ukv-prd",
+              "arn:aws:s3:::aws-earth-mo-atmospheric-mogreps-uk-prd"
+            ]
+        },
+        {
+            "Sid": "AllObjectActions",
+            "Effect": "Allow",
+            "Action": "s3:*Object",
+            "Resource": [
+              "arn:aws:s3:::aws-earth-mo-atmospheric-ukv-prd/*",
+              "arn:aws:s3:::aws-earth-mo-atmospheric-mogreps-uk-prd/*"
+            ]
+        }
+    ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "metoffice_task_role_policy_attachment_2" {
+  role = aws_iam_role.metoffice_task_role.name
+  policy_arn = aws_iam_policy.metoffice_task_policy_read_metoffice.arn
+}
+
 # Execution role, required by tasks to pull container images and publish container logs to Amazon CloudWatch
 resource "aws_iam_role" "metoffice_execution_role" {
   name = "metoffice_ec2_execution_role"
