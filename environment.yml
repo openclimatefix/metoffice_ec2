@@ -14,3 +14,4 @@ dependencies:
   - cartopy
   - dask[array]
   - h5netcdf
+  - sentry-sdk

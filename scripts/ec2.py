@@ -6,6 +6,13 @@ import boto3
 import logging
 import os
 import time
+import sentry_sdk
+
+sentry_sdk.init(
+    'https://4e4ddd1fa2aa4353bd904fa74852913e@o400768.ingest.sentry.io/5259484',
+    release=f'metoffice_ec2@{os.getenv("RELEASE_VERSION", "UNSET")}',
+    environment=os.getenv('SENTRY_ENV', 'development')
+)
 
 SQS_URL_DEFAULT = 'https://sqs.eu-west-1.amazonaws.com/741607616921/uk-metoffice-nwp'
 SQS_URL = os.getenv('SQS_URL', SQS_URL_DEFAULT)
