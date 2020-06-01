@@ -1,11 +1,11 @@
 variable "ecs_vcpu" {
   type    = number
-  default = 256
+  default = 1024
 }
 
 variable "ecs_memory" {
   type    = number
-  default = 512
+  default = 2048
 }
 
 variable "ecs_desired_count" {
