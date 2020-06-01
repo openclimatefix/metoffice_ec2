@@ -13,5 +13,5 @@ dependencies:
   - boto3
   - cartopy
   - dask[array]
-  - h5netcdf
+  - netCDF4
   - sentry-sdk

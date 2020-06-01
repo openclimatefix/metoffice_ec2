@@ -3,7 +3,7 @@ from typing import Dict, List
 import hashlib
 import json
 import pandas as pd
-import io
+import netCDF4
 import xarray as xr
 import boto3
 
@@ -69,8 +69,11 @@ class MetOfficeMessage:
             Bucket=self.message['bucket'],
             Key=self.message['key'])
         netcdf_bytes = get_obj_response['Body'].read()
-        netcdf_bytes_io = io.BytesIO(netcdf_bytes)
-        return xr.open_dataset(netcdf_bytes_io)
+        # Adapted from
+        # https://github.com/pydata/xarray/issues/1075#issuecomment-373541528
+        nc4_ds = netCDF4.Dataset('MetOffice', memory=netcdf_bytes)
+        store = xr.backends.NetCDF4DataStore(nc4_ds)
+        return xr.open_dataset(store, engine='netcdf4')
 
     def object_size_mb(self) -> float:
         """Return the object size in megabytes."""
