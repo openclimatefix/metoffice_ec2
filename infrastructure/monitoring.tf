@@ -97,7 +97,12 @@ resource "aws_cloudwatch_dashboard" "dash" {
                         }
                     ]
                 },
-                "title": "ECS CPU"
+                "title": "ECS CPU",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
@@ -121,7 +126,12 @@ resource "aws_cloudwatch_dashboard" "dash" {
                         }
                     ]
                 },
-                "title": "ECS Memory"
+                "title": "ECS Memory",
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
