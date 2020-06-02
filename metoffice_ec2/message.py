@@ -1,7 +1,8 @@
 import os
-from typing import Dict, List
+from typing import Dict, Union
 import hashlib
 import json
+import numpy as np
 import pandas as pd
 import netCDF4
 import xarray as xr
@@ -9,7 +10,13 @@ import boto3
 
 
 class MetOfficeMessage:
-    """Represents the MetOffice-specific portion of the SNS message."""
+    """Represents the MetOffice-specific portion of the SNS message.
+
+
+    Attributes:
+        message: A Dict of Met Office message details.
+        sqs_message: A Dict representing the SQS message.
+    """
 
     def __init__(self, sqs_message: Dict):
         """
@@ -34,27 +41,47 @@ class MetOfficeMessage:
         attributes = self.sqs_message['Attributes']
         return int(attributes['ApproximateReceiveCount'])
 
+    def height_meters(self) -> np.ndarray:
+        try:
+            height_str = self.message['height']
+        except KeyError:
+            return np.array([])
+        height_list = height_str.split(" ")
+        height_array = np.array(height_list).astype(float)
+        return height_array
+
     def is_multi_level(self):
         """Return True if this message is about an NWP with multiple
         vertical levels."""
-        return 'height' in self.message and ' ' in self.message['height']
+        return len(self.height_meters()) > 1
 
     def is_wanted(
-            self, nwp_params: List[str], max_receive_count: int = 10) -> bool:
+            self, nwp_params: pd.DataFrame,
+            max_receive_count: int = 10) -> bool:
         """Returns True if this message describes an NWP we want.
 
         Args:
           nwp_params: The Numerical Weather Prediction parameters we want.
+              A Pandas DataFrame, one row per NWP field we want.  Must have at
+              least a 'name' column (for the NWP field name).  Can have
+              a 'height' column.
           max_receive_count: If this message has been received more than
             `max_receive_count` times, then we don't want this message.
         """
+        if self.sqs_approx_receive_count() > max_receive_count:
+            return False
+
         var_name = self.message['name']
-        is_multi_level = self.is_multi_level()
-        approx_receive_count = self.sqs_approx_receive_count()
-        return (
-            var_name in nwp_params and
-            is_multi_level and
-            approx_receive_count < max_receive_count)
+        height_meters = set(self.height_meters())
+        for _, row in nwp_params.iterrows():
+            if row['name'] != var_name:
+                continue
+            row = row.dropna()
+            if 'height' in row:
+                if not height_meters.issuperset(row['height']):
+                    continue
+            return True
+        return False
 
     def source_url(self) -> str:
         """Return the URL for the NetCDF file described by this message."""

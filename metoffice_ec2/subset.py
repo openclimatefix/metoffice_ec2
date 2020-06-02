@@ -10,12 +10,16 @@ import s3fs
 
 def subset(
         dataset: xr.Dataset,
-        height_meters: List[int],
+        height_meters: Optional[List[int]] = None,
         north: Optional[float] = None,
         east: Optional[float] = None,
         south: Optional[float] = None,
         west: Optional[float] = None) -> xr.Dataset:
-    return dataset.sel(height=height_meters).loc[
+
+    if height_meters is not None:
+        dataset = dataset.sel(height=height_meters)
+
+    return dataset.loc[
         dict(
             projection_x_coordinate=slice(west, east),
             projection_y_coordinate=slice(south, north))]

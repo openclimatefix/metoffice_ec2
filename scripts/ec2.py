@@ -7,6 +7,7 @@ import logging
 import os
 import time
 import sentry_sdk
+import pandas as pd
 
 sentry_sdk.init(
     'https://4e4ddd1fa2aa4353bd904fa74852913e@o400768.ingest.sentry.io/5259484',
@@ -24,23 +25,28 @@ REGION = 'eu-west-1'
 
 # Remember to update infrastructure/inputs.tf as well, when modifying this.
 WIND_HEIGHTS_METERS = [10, 50, 100, 150]  # Heights for wind power forecasting.
-PARAMS_TO_COPY = [
+
+# DataFrame with columns 'name' and 'height' (vertical levels in meters).
+# 'height' should be a list of numbers.
+PARAMS_TO_COPY = pd.DataFrame([
     # For wind power forecasting:
     # Select wind_speed at 5 meters to help with PV forecasting.
-    {'name': 'wind_speed', 'height_meters': [5] + WIND_HEIGHTS_METERS},
-    {'name': 'wind_speed_of_gust', 'height_meters': WIND_HEIGHTS_METERS},
-    {'name': 'wind_from_direction', 'height_meters': WIND_HEIGHTS_METERS},
+    {'name': 'wind_speed', 'height': [5] + WIND_HEIGHTS_METERS},
+    {'name': 'wind_speed_of_gust', 'height': WIND_HEIGHTS_METERS},
+    {'name': 'wind_from_direction', 'height': WIND_HEIGHTS_METERS},
 
     # For solar PV power forecasting:
-    {'name': 'air_temperature', 'height_meters': [1.5]},
+    {'name': 'air_temperature', 'height': [1.5]},
+
+    # The following have no height parameter.
     {'name': 'surface_temperature'},
     {'name': 'surface_diffusive_downwelling_shortwave_flux_in_air'},
     {'name': 'surface_direct_downwelling_shortwave_flux_in_air'},
-    {'name': 'surface_downwelling_shortwave_flux_in_air'}]
+    {'name': 'surface_downwelling_shortwave_flux_in_air'}])
 
 # Approximate boundaries of UKV data from JASMIN, projected into
 # MOGREPS-UK's Lambert Azimuthal Equal Area projection.
-GEO_BOUNDARY = {
+DEFAULT_GEO_BOUNDARY = {
     'north':  668920.2182797253,
     'south': -742783.9449856092,
     'east':   494613.07597373443,
@@ -69,11 +75,11 @@ def configure_logger():
 _LOG = configure_logger()
 
 
-def load_subset_and_save_data(mo_message, s3):
+def load_subset_and_save_data(mo_message, height_meters, s3):
     timer = Timer()
     dataset = mo_message.load_netcdf()
     timer.tick('Opening xarray Dataset')
-    dataset = subset.subset(dataset, **SUBSET_PARAMS)
+    dataset = subset.subset(dataset, height_meters, **DEFAULT_GEO_BOUNDARY)
     timer.tick('Subsetting')
     full_zarr_filename = subset.get_zarr_filename(dataset, DEST_BUCKET)
     try:
