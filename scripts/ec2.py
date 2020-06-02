@@ -18,7 +18,7 @@ SQS_URL_DEFAULT = 'https://sqs.eu-west-1.amazonaws.com/741607616921/uk-metoffice
 SQS_URL = os.getenv('SQS_URL', SQS_URL_DEFAULT)
 
 DEST_BUCKET_DEFAULT = 'uk-metoffice-nwp'
-DEST_BUCKET = os.getenv('DEST_BUCKET', SQS_URL_DEFAULT)
+DEST_BUCKET = os.getenv('DEST_BUCKET', DEST_BUCKET_DEFAULT)
 
 REGION = 'eu-west-1'
 
