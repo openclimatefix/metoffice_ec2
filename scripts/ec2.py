@@ -22,26 +22,29 @@ DEST_BUCKET = os.getenv('DEST_BUCKET', SQS_URL_DEFAULT)
 
 REGION = 'eu-west-1'
 
-# Remember to update infrastructure/inputs.tf as well, when modifying this
+# Remember to update infrastructure/inputs.tf as well, when modifying this.
+WIND_HEIGHTS_METERS = [10, 50, 100, 150]  # Heights for wind power forecasting.
 PARAMS_TO_COPY = [
-    'wind_speed',
-    'wind_speed_of_gust',
-    'wind_from_direction',
-    'air_temperature',
-    'surface_diffusive_downwelling_shortwave_flux_in_air',
-    'surface_direct_downwelling_shortwave_flux_in_air',
-    'surface_downwelling_shortwave_flux_in_air',
-    'surface_temperature']
+    # For wind power forecasting:
+    # Select wind_speed at 5 meters to help with PV forecasting.
+    {'name': 'wind_speed', 'height_meters': [5] + WIND_HEIGHTS_METERS},
+    {'name': 'wind_speed_of_gust', 'height_meters': WIND_HEIGHTS_METERS},
+    {'name': 'wind_from_direction', 'height_meters': WIND_HEIGHTS_METERS},
 
-SUBSET_PARAMS = {
-    'height_meters': [10, 50, 100, 150],
+    # For solar PV power forecasting:
+    {'name': 'air_temperature', 'height_meters': [1.5]},
+    {'name': 'surface_temperature'},
+    {'name': 'surface_diffusive_downwelling_shortwave_flux_in_air'},
+    {'name': 'surface_direct_downwelling_shortwave_flux_in_air'},
+    {'name': 'surface_downwelling_shortwave_flux_in_air'}]
 
-    # Approximate boundaries of UKV data from JASMIN, projected into
-    # MOGREPS-UK's Lambert Azimuthal Equal Area projection.
-    'north': 668920.2182797253,
+# Approximate boundaries of UKV data from JASMIN, projected into
+# MOGREPS-UK's Lambert Azimuthal Equal Area projection.
+GEO_BOUNDARY = {
+    'north':  668920.2182797253,
     'south': -742783.9449856092,
-    'east': 494613.07597373443,
-    'west': -611744.985010537}
+    'east':   494613.07597373443,
+    'west':  -611744.985010537}
 
 
 def configure_logger():
