@@ -1,40 +1,21 @@
+import json
 import math
 import pandas as pd
 
-from metoffice_ec2.predict import load_model, predict, predict_as_json
+from metoffice_ec2.predict import load_irradiance_data, load_model, predict, predict_as_json_str
 
 
 def test_predict():
-    irradiance_df = pd.DataFrame(data={
-        "system_id": [2, 973, 2829],
-        "dswrf": [10.0, 250.0, 100.0]
-    })
+    irradiance_dataset = load_irradiance_data("data/ukv/2020-06-04T090000Z-2020-06-04T170000Z-a45a52ba68fde0503738548205742728477e9db7.nc")
     model_df = load_model("model/predict_pv_yield_nwp.csv")
+    predictions = predict(irradiance_dataset, model_df)
+    assert predictions.at[0, "pv_yield_predicted"] > 0
 
-    predictions = predict(irradiance_df, model_df)
-    
-    system_2_yield = predictions.at[0, "pv_yield_predicted"]
-    assert math.isnan(system_2_yield)
-
-    system_973_yield = predictions.at[1, "pv_yield_predicted"]
-    assert system_973_yield > 0
-
-    system_2829_yield = predictions.at[2, "pv_yield_predicted"]
-    assert system_2829_yield > 0
-
-    predictions_json = predict_as_json(irradiance_df, model_df)
-
-    assert predictions_json == """[
-    {
-        "system_id":2,
-        "pv_yield_predicted":null
-    },
-    {
-        "system_id":973,
-        "pv_yield_predicted":1187.0
-    },
-    {
-        "system_id":2829,
-        "pv_yield_predicted":518.7
-    }
-]"""
+    predictions_json_str = predict_as_json_str(irradiance_dataset, model_df)
+    predictions_json = json.loads(predictions_json_str)
+    prediction0 = predictions_json[0]
+    assert prediction0["system_id"] == 973
+    assert prediction0["easting"] == 445587
+    assert prediction0["northing"] == 497235
+    assert prediction0["time"] == 1591290000000
+    assert prediction0["pv_yield_predicted"] > 0
