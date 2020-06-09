@@ -146,7 +146,7 @@ resource "aws_ecs_task_definition" "metoffice_task" {
   container_definitions = <<JSON
 [{
     "name": "main",
-    "image": "docker.pkg.github.com/openclimatefix/metoffice_ec2/main:${var.docker_image_version}",
+    "image": "openclimatefix/metoffice_ec2:${var.docker_image_version}",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
