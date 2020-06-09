@@ -1,16 +1,16 @@
 variable "ecs_vcpu" {
   type    = number
-  default = 256
+  default = 1024
 }
 
 variable "ecs_memory" {
   type    = number
-  default = 512
+  default = 2048
 }
 
 variable "ecs_desired_count" {
   type    = number
-  default = 1
+  default = 2
 }
 
 variable "sqs_message_retention_seconds" {
@@ -20,7 +20,7 @@ variable "sqs_message_retention_seconds" {
 
 variable "docker_image_version" {
   type    = string
-  default = "1.2.0"
+  default = "1.3.0"
 }
 
 variable "sns_filter_policy" {
