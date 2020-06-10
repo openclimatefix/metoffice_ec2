@@ -95,5 +95,15 @@ POLICY
 resource "aws_s3_bucket" "output" {
   bucket = "ocf-uk-metoffice-nwp"
 
+  lifecycle_rule {
+    id      = "ia-after-one-week"
+    enabled = true
+
+    transition {
+      days          = 3
+      storage_class = "STANDARD_IA"
+    }
+  }
+
   tags = local.common_tags
 }
