@@ -100,7 +100,7 @@ resource "aws_s3_bucket" "output" {
     enabled = true
 
     transition {
-      days          = 3
+      days          = 30
       storage_class = "STANDARD_IA"
     }
   }
