@@ -10,7 +10,7 @@ variable "ecs_memory" {
 
 variable "ecs_desired_count" {
   type    = number
-  default = 2
+  default = 5
 }
 
 variable "sqs_message_retention_seconds" {

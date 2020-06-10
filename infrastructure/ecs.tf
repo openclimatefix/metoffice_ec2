@@ -181,6 +181,11 @@ JSON
 # 2. Cluster
 resource "aws_ecs_cluster" "metoffice_ec2" {
   name = "metoffice_ec2_cluster"
+  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+
+  default_capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+  }
   
   tags = local.common_tags
 }
@@ -191,6 +196,7 @@ resource "aws_ecs_service" "metoffice_service" {
   cluster         = aws_ecs_cluster.metoffice_ec2.id
   task_definition = aws_ecs_task_definition.metoffice_task.arn
   launch_type = "FARGATE"
+  propagate_tags = "TASK_DEFINITION"
   
   desired_count   = var.ecs_desired_count
 
