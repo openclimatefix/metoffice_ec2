@@ -53,7 +53,12 @@ resource "aws_cloudwatch_dashboard" "dash" {
                 },
                 "title": "Age of Messages",
                 "stat": "Average",
-                "period": 300
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
             }
         },
         {
