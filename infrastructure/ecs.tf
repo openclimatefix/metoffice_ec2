@@ -279,6 +279,72 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main.id
 
   tags = merge(map( 
-            "Name", "metoffice_ec2_igw", 
+            "Name", "metoffice_ec2_igw",
         ), local.common_tags)
+}
+
+# Autoscaling
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = 5
+  min_capacity       = 0
+  resource_id        = "service/${aws_ecs_cluster.metoffice_ec2.name}/${aws_ecs_service.metoffice_service.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "ecs_policy" {
+  name               = "metoffice_ec2_scale-ecs"
+  policy_type        = "StepScaling"
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ExactCapacity"
+    cooldown                = 60
+    metric_aggregation_type = "Average"
+
+    # Assuming alarm threshold of 1000
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      metric_interval_upper_bound = 999
+      scaling_adjustment          = 1
+    }
+
+    step_adjustment {
+      metric_interval_lower_bound = 1000
+      metric_interval_upper_bound = 1999
+      scaling_adjustment          = 2
+    }
+
+    step_adjustment {
+      metric_interval_lower_bound = 2000
+      metric_interval_upper_bound = 2999
+      scaling_adjustment          = 3
+    }
+
+    step_adjustment {
+      metric_interval_lower_bound = 3000
+      scaling_adjustment          = 5
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "ecs_metric_alarm" {
+  alarm_name          = "metoffice_ec2_sqs_average_msg_age"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "ApproximateAgeOfOldestMessage"
+  namespace           = "AWS/SQS"
+  period              = "120"
+  statistic           = "Average"
+  threshold           = "1000"
+
+  dimensions = {
+    QueueName = aws_sqs_queue.metqueue.name
+  }
+
+  alarm_description = "This metric monitors SQS message age"
+  alarm_actions     = ["${aws_appautoscaling_policy.ecs_policy.arn}"]
+  tags              = local.common_tags
 }
