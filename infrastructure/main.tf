@@ -107,3 +107,9 @@ resource "aws_s3_bucket" "output" {
 
   tags = local.common_tags
 }
+
+resource "aws_s3_bucket" "forecasting_data" {
+  bucket = "ocf-forecasting-data"
+
+  tags = local.common_tags
+}
