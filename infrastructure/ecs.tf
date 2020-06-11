@@ -23,7 +23,7 @@ POLICY
 }
 
 resource "aws_iam_policy" "metoffice_task_policy" {
-  name = "metoffice_ec2_task_role_policy"
+  name        = "metoffice_ec2_task_role_policy"
   description = "Allows access to SQS and S3"
 
   policy = <<POLICY
@@ -73,12 +73,12 @@ POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "metoffice_task_role_policy_attachment" {
-  role = aws_iam_role.metoffice_task_role.name
+  role       = aws_iam_role.metoffice_task_role.name
   policy_arn = aws_iam_policy.metoffice_task_policy.arn
 }
 
 resource "aws_iam_policy" "metoffice_task_policy_read_metoffice" {
-  name = "metoffice_ec2_task_role_policy_read_metoffice"
+  name        = "metoffice_ec2_task_role_policy_read_metoffice"
   description = "Allows read access to external MetOffice S3 bucket"
 
   policy = <<POLICY
@@ -109,7 +109,7 @@ POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "metoffice_task_role_policy_attachment_2" {
-  role = aws_iam_role.metoffice_task_role.name
+  role       = aws_iam_role.metoffice_task_role.name
   policy_arn = aws_iam_policy.metoffice_task_policy_read_metoffice.arn
 }
 
@@ -135,14 +135,14 @@ POLICY
 }
 
 resource "aws_iam_role_policy_attachment" "metoffice_execution_role_policy_attachment" {
-  role = aws_iam_role.metoffice_execution_role.name
+  role       = aws_iam_role.metoffice_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 
 # 1. Task Definition
 resource "aws_ecs_task_definition" "metoffice_task" {
-  family = "metoffice_ec2"
+  family                = "metoffice_ec2"
   container_definitions = <<JSON
 [{
     "name": "main",
@@ -168,8 +168,8 @@ resource "aws_ecs_task_definition" "metoffice_task" {
 }]
 JSON
   requires_compatibilities = ["FARGATE"]
-  network_mode = "awsvpc"
-  task_role_arn = aws_iam_role.metoffice_task_role.arn
+  network_mode       = "awsvpc"
+  task_role_arn      = aws_iam_role.metoffice_task_role.arn
   execution_role_arn = aws_iam_role.metoffice_execution_role.arn
 
   cpu = var.ecs_vcpu
@@ -180,7 +180,7 @@ JSON
 
 # 2. Cluster
 resource "aws_ecs_cluster" "metoffice_ec2" {
-  name = "metoffice_ec2_cluster"
+  name               = "metoffice_ec2_cluster"
   capacity_providers = ["FARGATE", "FARGATE_SPOT"]
 
   default_capacity_provider_strategy {
@@ -195,15 +195,17 @@ resource "aws_ecs_service" "metoffice_service" {
   name            = "metoffice_ec2_service"
   cluster         = aws_ecs_cluster.metoffice_ec2.id
   task_definition = aws_ecs_task_definition.metoffice_task.arn
-  launch_type = "FARGATE"
-  propagate_tags = "TASK_DEFINITION"
-  
-  # desired_count   = var.ecs_desired_count
+  launch_type     = "FARGATE"
+  propagate_tags  = "TASK_DEFINITION"
 
   network_configuration {
-      subnets = [aws_subnet.main.id]
-      security_groups = [aws_security_group.main.id]
+      subnets          = [aws_subnet.main.id]
+      security_groups  = [aws_security_group.main.id]
       assign_public_ip = true
+  }
+
+  lifecycle {
+    ignore_changes = [desired_count]
   }
 
   tags = local.common_tags
@@ -286,7 +288,7 @@ resource "aws_internet_gateway" "gw" {
 # Autoscaling
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = 5
-  min_capacity       = 0
+  min_capacity       = 1
   resource_id        = "service/${aws_ecs_cluster.metoffice_ec2.name}/${aws_ecs_service.metoffice_service.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -304,27 +306,20 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
     cooldown                = 60
     metric_aggregation_type = "Average"
 
-    # Assuming alarm threshold of 1000
+    # Assuming alarm threshold of 2000
     step_adjustment {
-      metric_interval_lower_bound = 0
-      metric_interval_upper_bound = 1000
-      scaling_adjustment          = 1
-    }
-
-    step_adjustment {
-      metric_interval_lower_bound = 1000
-      metric_interval_upper_bound = 2000
+      metric_interval_upper_bound = 1000 # 2000-3000
       scaling_adjustment          = 2
     }
 
     step_adjustment {
-      metric_interval_lower_bound = 2000
-      metric_interval_upper_bound = 3000
+      metric_interval_lower_bound = 1000
+      metric_interval_upper_bound = 2500 # 3000-4500
       scaling_adjustment          = 3
     }
 
     step_adjustment {
-      metric_interval_lower_bound = 3000
+      metric_interval_lower_bound = 2500 # >4500
       scaling_adjustment          = 5
     }
   }
@@ -333,12 +328,12 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
 resource "aws_cloudwatch_metric_alarm" "ecs_metric_alarm" {
   alarm_name          = "metoffice_ec2_sqs_average_msg_age"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "2"
+  evaluation_periods  = "1"
   metric_name         = "ApproximateAgeOfOldestMessage"
   namespace           = "AWS/SQS"
   period              = "120"
   statistic           = "Average"
-  threshold           = "1000"
+  threshold           = "2000"
 
   dimensions = {
     QueueName = aws_sqs_queue.metqueue.name
