@@ -228,7 +228,12 @@ resource "aws_cloudwatch_dashboard" "dash" {
                 "region": "eu-west-1",
                 "title": "Task Count",
                 "stat": "Average",
-                "period": 300
+                "period": 300,
+                "yAxis": {
+                    "left": {
+                        "min": 0
+                    }
+                }
             }
         }
     ]
