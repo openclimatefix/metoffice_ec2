@@ -8,10 +8,10 @@ variable "ecs_memory" {
   default = 2048
 }
 
-variable "ecs_desired_count" {
-  type    = number
-  default = 5
-}
+# variable "ecs_desired_count" {
+#   type    = number
+#   default = 5
+# }
 
 variable "sqs_message_retention_seconds" {
   type    = number

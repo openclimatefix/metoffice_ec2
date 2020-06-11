@@ -198,7 +198,7 @@ resource "aws_ecs_service" "metoffice_service" {
   launch_type = "FARGATE"
   propagate_tags = "TASK_DEFINITION"
   
-  desired_count   = var.ecs_desired_count
+  # desired_count   = var.ecs_desired_count
 
   network_configuration {
       subnets = [aws_subnet.main.id]
