@@ -1,3 +1,4 @@
+from geojson import Feature, Point, FeatureCollection
 import pandas as pd
 import xarray as xr
 
@@ -24,14 +25,24 @@ def predict(irradiance_dataset: xr.Dataset, model_df: pd.DataFrame) -> pd.DataFr
     # Convert to a dataframe
     irradiance_df = nwp_interp["surface_downwelling_shortwave_flux_in_air"].to_dataframe()
 
-    # Merge with the model datadrame and use the linear regression parameters
+    # Merge with the model dataframe and use the linear regression parameters
     # to predict a PV yield for each system
     df = pd.merge(irradiance_df, model_df, how="left", left_index=True, right_on="system_id")
     df["pv_yield_predicted"] = df["slope"] * df["surface_downwelling_shortwave_flux_in_air"] + df["intercept"]
-    df = df[["system_id", "easting", "northing", "time", "pv_yield_predicted"]]
+    df = df[["system_id", "longitude", "latitude", "time", "pv_yield_predicted"]]
     return df
 
 
-def predict_as_json_str(irradiance_dataset: xr.Dataset, model_df: pd.DataFrame) -> str:
-    """Predict PV yield for PV systems with irradiance values in irradiance_dataset, and return a JSON string"""
-    return predict(irradiance_dataset, model_df).to_json(orient="records", double_precision=1, indent=4)
+def predict_as_geojson(irradiance_dataset: xr.Dataset, model_df: pd.DataFrame) -> FeatureCollection:
+    """Predict PV yield for PV systems with irradiance values in irradiance_dataset, and return a GeoJSON FeatureCollection"""
+    rows = predict(irradiance_dataset, model_df).to_dict('records')
+    feature_collection = FeatureCollection([_to_geojson_feature(row) for row in rows])
+    return feature_collection
+
+
+def _to_geojson_feature(row):
+    return Feature(geometry=Point((row["longitude"], row["latitude"])), properties={
+        "system_id": row["system_id"],
+        "time": row["time"].isoformat(),
+        "pv_yield_predicted": row["pv_yield_predicted"]
+    })

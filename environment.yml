@@ -15,3 +15,4 @@ dependencies:
   - dask[array]
   - netCDF4
   - sentry-sdk
+  - geojson

@@ -2,7 +2,7 @@ import json
 import math
 import pandas as pd
 
-from metoffice_ec2.predict import load_irradiance_data, load_model, predict, predict_as_json_str
+from metoffice_ec2.predict import load_irradiance_data, load_model, predict, predict_as_geojson
 
 
 def test_predict():
@@ -11,11 +11,14 @@ def test_predict():
     predictions = predict(irradiance_dataset, model_df)
     assert predictions.at[0, "pv_yield_predicted"] > 0
 
-    predictions_json_str = predict_as_json_str(irradiance_dataset, model_df)
-    predictions_json = json.loads(predictions_json_str)
-    prediction0 = predictions_json[0]
-    assert prediction0["system_id"] == 973
-    assert prediction0["easting"] == 445587
-    assert prediction0["northing"] == 497235
-    assert prediction0["time"] == 1591290000000
-    assert prediction0["pv_yield_predicted"] > 0
+    feature_collection = predict_as_geojson(irradiance_dataset, model_df)
+    feature0 = feature_collection["features"][0]
+    assert feature0["geometry"]["coordinates"] == [-1.299834, 54.3686]
+    assert feature0["properties"]["system_id"] == 973
+    assert feature0["properties"]["time"] == "2020-06-04T17:00:00"
+    assert feature0["properties"]["pv_yield_predicted"] > 0
+
+    # Dump to file
+    # import geojson
+    # with open("predictions_2020-06-04T17.geojson", 'w') as f:
+    #     geojson.dump(feature_collection, f, indent=4)
