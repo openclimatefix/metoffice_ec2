@@ -308,13 +308,19 @@ resource "aws_appautoscaling_policy" "ecs_policy" {
 
     # Assuming alarm threshold of 2000
     step_adjustment {
-      metric_interval_upper_bound = 1000 # 2000-3000
+      metric_interval_upper_bound = 500 # 2000-2500
       scaling_adjustment          = 2
     }
 
     step_adjustment {
-      metric_interval_lower_bound = 1000
-      metric_interval_upper_bound = 2500 # 3000-4500
+      metric_interval_lower_bound = 500
+      metric_interval_upper_bound = 2000 # 2500-4000
+      scaling_adjustment          = 3
+    }
+
+    step_adjustment {
+      metric_interval_lower_bound = 2000
+      metric_interval_upper_bound = 2500 # 4000-4500
       scaling_adjustment          = 3
     }
 
