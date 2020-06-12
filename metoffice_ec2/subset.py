@@ -3,7 +3,7 @@ import numcodecs
 import pandas as pd
 import os
 import lzma
-from typing import Optional, List, Union, MutableMapping
+from typing import Optional, List, Union, MutableMapping, Hashable
 import pathlib
 import s3fs
 
@@ -25,8 +25,9 @@ def subset(
             projection_y_coordinate=slice(south, north))]
 
 
-def get_variable_name(dataset: xr.Dataset) -> List[str]:
-    return list(dataset.data_vars.keys())[0]
+def get_variable_name(dataset: xr.Dataset) -> str:
+    var_name = list(dataset.data_vars.keys())[0]
+    return str(var_name)
 
 
 def get_zarr_filename(dataset: xr.Dataset, dest_path: str) -> str:

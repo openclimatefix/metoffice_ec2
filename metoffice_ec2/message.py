@@ -125,7 +125,7 @@ class MetOfficeMessage:
 
 
 def _check_md5(text: str, md5_of_body: str):
-    text = text.encode('utf-8')
-    md5 = hashlib.md5(text)
+    text_utf8 = text.encode('utf-8')
+    md5 = hashlib.md5(text_utf8)
     if md5.hexdigest() != md5_of_body:
         raise RuntimeError('MD5 checksum does not match!')
