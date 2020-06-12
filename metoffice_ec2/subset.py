@@ -3,7 +3,7 @@ import numcodecs
 import pandas as pd
 import os
 import lzma
-from typing import Optional, List, Union, MutableMapping, Hashable
+from typing import Optional, List, Union, MutableMapping
 import pathlib
 import s3fs
 
