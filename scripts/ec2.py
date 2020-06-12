@@ -26,7 +26,7 @@ REGION = 'eu-west-1'
 # Remember to update infrastructure/inputs.tf as well, when modifying this.
 WIND_HEIGHTS_METERS = [10, 50, 100, 150]  # Heights for wind power forecasting.
 
-# DataFrame with columns 'name' and 'height' (vertical levels in meters).
+# DataFrame with index 'name' column 'height' (vertical levels in meters).
 # 'height' should be a list of numbers.
 PARAMS_TO_COPY = pd.DataFrame([
     # For wind power forecasting:
@@ -42,7 +42,7 @@ PARAMS_TO_COPY = pd.DataFrame([
     {'name': 'surface_temperature'},
     {'name': 'surface_diffusive_downwelling_shortwave_flux_in_air'},
     {'name': 'surface_direct_downwelling_shortwave_flux_in_air'},
-    {'name': 'surface_downwelling_shortwave_flux_in_air'}])
+    {'name': 'surface_downwelling_shortwave_flux_in_air'}]).set_index('name')
 
 # Approximate boundaries of UKV data from JASMIN, projected into
 # MOGREPS-UK's Lambert Azimuthal Equal Area projection.
@@ -126,8 +126,10 @@ def loop():
         if mo_message.is_wanted(PARAMS_TO_COPY):
             _LOG.info('Message is wanted!  Loading NetCDF file...')
             time_start = time.time()
+            var_name = mo_message.message['name']
+            height_meters = PARAMS_TO_COPY.loc[var_name]
             try:
-                load_subset_and_save_data(mo_message, s3)
+                load_subset_and_save_data(mo_message, height_meters, s3)
             except Exception as e:
                 _LOG.exception(e)
             else:

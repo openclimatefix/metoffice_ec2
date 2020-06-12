@@ -62,8 +62,8 @@ class MetOfficeMessage:
 
         Args:
           nwp_params: The Numerical Weather Prediction parameters we want.
-              A Pandas DataFrame, one row per NWP field we want.  Must have at
-              least a 'name' column (for the NWP field name).  Can have
+              A Pandas DataFrame, one row per NWP field we want.  Must have
+              index set to 'name' (for the NWP field name).  Can have
               a 'height' column.
           max_receive_count: If this message has been received more than
             `max_receive_count` times, then we don't want this message.
@@ -71,10 +71,9 @@ class MetOfficeMessage:
         if self.sqs_approx_receive_count() > max_receive_count:
             return False
 
-        var_name = self.message['name']
         height_meters = set(self.height_meters())
-        for _, row in nwp_params.iterrows():
-            if row['name'] != var_name:
+        for var_name, row in nwp_params.iterrows():
+            if self.message['name'] != var_name:
                 continue
             row = row.dropna()
             if 'height' in row:

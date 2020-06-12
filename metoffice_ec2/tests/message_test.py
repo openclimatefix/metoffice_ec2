@@ -35,22 +35,28 @@ def test_single_level_wind(single_level_wind_message):
 
 
 def test_is_wanted_multi_level_wind(multi_level_wind_message):
-    wanted = pd.DataFrame([{'name': 'wind_speed', 'height': [50]}])
+    wanted = pd.DataFrame(
+        [{'name': 'wind_speed', 'height': [50]}]).set_index('name')
     assert multi_level_wind_message.is_wanted(wanted)
 
-    wanted2 = pd.DataFrame([{'name': 'wind_speed', 'height': [5, 10, 50]}])
+    wanted2 = pd.DataFrame(
+        [{'name': 'wind_speed', 'height': [5, 10, 50]}]).set_index('name')
     assert multi_level_wind_message.is_wanted(wanted2)
 
-    not_wanted1 = pd.DataFrame([{'name': 'wind_speed', 'height': [123]}])
+    not_wanted1 = pd.DataFrame(
+        [{'name': 'wind_speed', 'height': [123]}]).set_index('name')
     assert not multi_level_wind_message.is_wanted(not_wanted1)
 
-    not_wanted2 = pd.DataFrame([{'name': 'wind_direction', 'height': [50]}])
+    not_wanted2 = pd.DataFrame(
+        [{'name': 'wind_direction', 'height': [50]}]).set_index('name')
     assert not multi_level_wind_message.is_wanted(not_wanted2)
 
 
 def test_is_wanted_single_level_wind(single_level_wind_message):
-    wanted = pd.DataFrame([{'name': 'wind_speed', 'height': [10]}])
+    wanted = pd.DataFrame(
+        [{'name': 'wind_speed', 'height': [10]}]).set_index('name')
     assert single_level_wind_message.is_wanted(wanted)
 
-    not_wanted = pd.DataFrame([{'name': 'wind_speed', 'height': [50]}])
+    not_wanted = pd.DataFrame(
+        [{'name': 'wind_speed', 'height': [50]}]).set_index('name')
     assert not single_level_wind_message.is_wanted(not_wanted)
