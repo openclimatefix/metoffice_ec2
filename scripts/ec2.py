@@ -127,7 +127,7 @@ def loop():
             _LOG.info('Message is wanted!  Loading NetCDF file...')
             time_start = time.time()
             var_name = mo_message.message['name']
-            height_meters = PARAMS_TO_COPY.loc[var_name]
+            height_meters = PARAMS_TO_COPY['height'][var_name]
             try:
                 load_subset_and_save_data(mo_message, height_meters, s3)
             except Exception as e:
