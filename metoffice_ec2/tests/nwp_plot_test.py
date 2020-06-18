@@ -1,4 +1,9 @@
-from metoffice_ec2.nwp_plot import find_zarr, filename_for_plot, extract_wind_from_direction, plot_xarray_data_array
+from metoffice_ec2.nwp_plot import (
+    find_zarr,
+    filename_for_plot,
+    extract_wind_from_direction,
+    plot_xarray_data_array,
+)
 import imghdr
 from fsspec.implementations.local import LocalFileSystem
 from pathlib import Path
@@ -14,11 +19,17 @@ def test_local_plot_pipeline(tmp_path):
     listing = find_zarr(fs, "data/mogreps", suffix=".zarr.zip")
     assert len(listing) == 1
     input_file = listing[0]
-    assert input_file.endswith("MOGREPS-UK__wind_from_direction__2020-03-15T15__2020-03-16T07.zarr.zip")
+    assert input_file.endswith(
+        "MOGREPS-UK__wind_from_direction__2020-03-15T15__2020-03-16T07.zarr.zip"
+    )
 
     # Create a suitable filename for the output plot png file
-    output_file = filename_for_plot(str(tmp_path), input_file, qualifier=f"_height{height}")
-    assert output_file.endswith("MOGREPS-UK__wind_from_direction__2020-03-15T15__2020-03-16T07_height100.0.png")
+    output_file = filename_for_plot(
+        str(tmp_path), input_file, qualifier=f"_height{height}"
+    )
+    assert output_file.endswith(
+        "MOGREPS-UK__wind_from_direction__2020-03-15T15__2020-03-16T07_height100.0.png"
+    )
 
     # Extract wind from direction array
     store = ZipStore(input_file)
