@@ -1,12 +1,14 @@
-import os
-from typing import Dict
 import hashlib
 import json
+import os
+from typing import Dict
+
+import boto3
+import netCDF4
 import numpy as np
 import pandas as pd
-import netCDF4
+
 import xarray as xr
-import boto3
 
 
 class MetOfficeMessage:

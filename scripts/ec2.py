@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-from metoffice_ec2 import message, subset
-from metoffice_ec2.timer import Timer
-import s3fs
-import boto3
 import logging
 import os
 import time
-import sentry_sdk
+
+import boto3
 import pandas as pd
+import s3fs
+import sentry_sdk
+from metoffice_ec2 import message, subset
+from metoffice_ec2.timer import Timer
 
 sentry_sdk.init(
     "https://4e4ddd1fa2aa4353bd904fa74852913e@o400768.ingest.sentry.io/5259484",

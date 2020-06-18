@@ -1,8 +1,10 @@
+from pathlib import Path
+from typing import IO, Any, List, Union
+
 import cartopy.crs as ccrs
 import fsspec
 import matplotlib.pyplot as plt
-from pathlib import Path
-from typing import Any, IO, List, Union
+
 import xarray as xr
 
 

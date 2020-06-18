@@ -1,6 +1,5 @@
-import time
 import logging
-
+import time
 
 _LOG = logging.getLogger("metoffice_ec2")
 

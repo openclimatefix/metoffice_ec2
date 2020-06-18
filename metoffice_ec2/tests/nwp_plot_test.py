@@ -1,14 +1,16 @@
+import imghdr
+from pathlib import Path
+
+from fsspec.implementations.local import LocalFileSystem
 from metoffice_ec2.nwp_plot import (
-    find_zarr,
-    filename_for_plot,
     extract_wind_from_direction,
+    filename_for_plot,
+    find_zarr,
     plot_xarray_data_array,
 )
-import imghdr
-from fsspec.implementations.local import LocalFileSystem
-from pathlib import Path
-import xarray as xr
 from zarr.storage import ZipStore
+
+import xarray as xr
 
 
 def test_local_plot_pipeline(tmp_path):

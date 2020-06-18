@@ -1,11 +1,13 @@
-import xarray as xr
+import lzma
+import os
+import pathlib
+from typing import List, MutableMapping, Optional, Union
+
 import numcodecs
 import pandas as pd
-import os
-import lzma
-from typing import Optional, List, Union, MutableMapping
-import pathlib
 import s3fs
+
+import xarray as xr
 
 
 def subset(
