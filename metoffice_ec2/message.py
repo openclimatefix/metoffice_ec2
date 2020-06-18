@@ -35,7 +35,7 @@ class MetOfficeMessage:
         """Returns the time the message was sent to the queue."""
         attributes = self.sqs_message["Attributes"]
         sent_timestamp = float(attributes["SentTimestamp"]) / 1000
-        return pd.Timestamp.fromtimestamp(sent_timestamp).tz_localize("Europe/London")
+        return pd.Timestamp.utcfromtimestamp(sent_timestamp)
 
     def sqs_approx_receive_count(self) -> int:
         """Returns the approx number of times a message has been received from
@@ -112,7 +112,7 @@ class MetOfficeMessage:
         string += "object_size={:,.1f} MB; ".format(self.object_size_mb())
         string += "model={}; ".format(self.message["model"])
         string += "SQS_message_sent_timestamp={}; ".format(
-            self.sqs_message_sent_timestamp()
+            self.sqs_message_sent_timestamp().isoformat()
         )
         string += "forecast_reference_time={}; ".format(
             self.message["forecast_reference_time"]

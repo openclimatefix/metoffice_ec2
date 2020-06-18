@@ -59,4 +59,4 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate metoffice_ec2
-          pytest
+          pytest -s -v
