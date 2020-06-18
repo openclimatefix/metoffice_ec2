@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Union
+from typing import Dict
 import hashlib
 import json
 import numpy as np

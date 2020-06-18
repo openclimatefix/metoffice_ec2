@@ -1,7 +1,3 @@
-import json
-import math
-import pandas as pd
-
 from metoffice_ec2.predict import (
     load_irradiance_data,
     load_model,
