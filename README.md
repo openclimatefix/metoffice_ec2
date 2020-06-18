@@ -73,11 +73,14 @@ and unit tests.
 
 To do development, please run this command within the `metoffice_ec2` conda environment:
 
-`conda install flake8 jedi mypy`
+`conda install black flake8 isort jedi mypy`
 
-Run static type checking with `mypy --ignore-missing-imports --follow-imports=silent *.py`
-in the `metoffice_ec2/` directory.
+Format the code with `black metoffice_ec2 scripts`.
 
-Check coding style with `flake8`
+Check coding style with `flake8`.
+
+Fix import order with `isort -rc .`.
+
+Run static type checking with `mypy metoffice_ec2 scripts`.
 
 `jedi` is for auto-completion (and other things) in IDEs.

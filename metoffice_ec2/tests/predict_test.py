@@ -1,12 +1,15 @@
-import json
-import math
-import pandas as pd
-
-from metoffice_ec2.predict import load_irradiance_data, load_model, predict, predict_as_geojson
+from metoffice_ec2.predict import (
+    load_irradiance_data,
+    load_model,
+    predict,
+    predict_as_geojson,
+)
 
 
 def test_predict():
-    irradiance_dataset = load_irradiance_data("data/ukv/2020-06-04T090000Z-2020-06-04T170000Z-a45a52ba68fde0503738548205742728477e9db7.nc")
+    irradiance_dataset = load_irradiance_data(
+        "data/ukv/2020-06-04T090000Z-2020-06-04T170000Z-a45a52ba68fde0503738548205742728477e9db7.nc"
+    )
     model_df = load_model("model/predict_pv_yield_nwp.csv")
     predictions = predict(irradiance_dataset, model_df)
     assert predictions.at[0, "pv_yield_predicted"] > 0
