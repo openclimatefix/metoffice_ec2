@@ -39,10 +39,10 @@ PARAMS_TO_COPY = pd.DataFrame(
         # For solar PV power forecasting:
         {"name": "air_temperature", "height": [1.5]},
         # The following have no height parameter.
-        {"name": "surface_temperature"},
-        {"name": "surface_diffusive_downwelling_shortwave_flux_in_air"},
-        {"name": "surface_direct_downwelling_shortwave_flux_in_air"},
-        {"name": "surface_downwelling_shortwave_flux_in_air"},
+        {"name": "surface_temperature", "height": None},
+        {"name": "surface_diffusive_downwelling_shortwave_flux_in_air", "height": None},
+        {"name": "surface_direct_downwelling_shortwave_flux_in_air", "height": None},
+        {"name": "surface_downwelling_shortwave_flux_in_air", "height": None},
     ]
 ).set_index("name")
 
@@ -132,7 +132,7 @@ def loop():
             _LOG.info("Message is wanted!  Loading NetCDF file...")
             time_start = time.time()
             var_name = mo_message.message["name"]
-            height_meters = PARAMS_TO_COPY["height"][var_name]
+            height_meters = PARAMS_TO_COPY.loc[var_name, "height"]
             try:
                 load_subset_and_save_data(mo_message, height_meters, s3)
             except Exception as e:

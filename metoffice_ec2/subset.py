@@ -20,6 +20,9 @@ def subset(
 ) -> xr.Dataset:
 
     if height_meters is not None:
+        print(dataset)
+        print(dataset.coords['height'].values)
+        # this is still broken for at least air_temperature
         dataset = dataset.sel(height=height_meters)
 
     return dataset.loc[
