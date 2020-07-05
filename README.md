@@ -1,6 +1,6 @@
 # metoffice_ec2
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Extract specific parts of the [UK Met Office's UKV and MOGREPS-UK numerical weather predictions from AWS](https://registry.opendata.aws/uk-met-office/), compress, and save to S3 as Zarr.  Intended to run on AWS EC2.
@@ -101,6 +101,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="http://jack-kelly.com"><img src="https://avatars2.githubusercontent.com/u/460756?v=4" width="100px;" alt=""/><br /><sub><b>Jack Kelly</b></sub></a><br /><a href="https://github.com/openclimatefix/metoffice_ec2/commits?author=JackKelly" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/flowirtz"><img src="https://avatars1.githubusercontent.com/u/6052785?v=4" width="100px;" alt=""/><br /><sub><b>Flo</b></sub></a><br /><a href="https://github.com/openclimatefix/metoffice_ec2/commits?author=flowirtz" title="Code">💻</a></td>
+    <td align="center"><a href="http://tom-e-white.com"><img src="https://avatars3.githubusercontent.com/u/85085?v=4" width="100px;" alt=""/><br /><sub><b>Tom White</b></sub></a><br /><a href="https://github.com/openclimatefix/metoffice_ec2/commits?author=tomwhite" title="Code">💻</a></td>
   </tr>
 </table>
 

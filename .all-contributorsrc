@@ -27,6 +27,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tomwhite",
+      "name": "Tom White",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/85085?v=4",
+      "profile": "http://tom-e-white.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
