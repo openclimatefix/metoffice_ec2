@@ -49,20 +49,28 @@ def test_handles_no_new_sqs_messages(queue, caplog):
 
 
 test_input = [
-    ("var_name", "sns_message_filename", "netcdf_path", "netcdf_name", "dest_filename"),
+    # ("var_name", "sns_message_filename", "netcdf_path", "netcdf_name", "dest_filename"),
     ("air_temperature", "mogreps_uk_air_temperature_1-5m.json", "data/mogreps/MOGREPS-UK__air_temperature_2020-07-16T14:00:00Z.nc", "9a9d4d6889c99285ae4efa76802ccb0ccb96e3c4.nc", "MOGREPS-UK/air_temperature/2020/m07/d16/h14/MOGREPS-UK__air_temperature__2020-07-16T14__2020-07-17T00.zarr"),
-    ("wind_speed", "mogreps_uk_wind_speed_multilevel.json", "data/mogreps/MOGREPS-UK__wind_speed_2020-07-19T14:00:00Z.nc", "0afc5a13dc1d9bbcd3a56103a93cea076375db56", "MOGREPS-UK/wind_speed/2020/m07/d19/h14/MOGREPS-UK__wind_speed__2020-07-19T14__2020-07-23T01.zarr")
+    # ("wind_speed", "mogreps_uk_wind_speed_multilevel.json", "data/mogreps/MOGREPS-UK__wind_speed_2020-07-19T14:00:00Z.nc", "0afc5a13dc1d9bbcd3a56103a93cea076375db56", "MOGREPS-UK/wind_speed/2020/m07/d19/h14/MOGREPS-UK__wind_speed__2020-07-19T14__2020-07-23T01.zarr")
+    ("surface_temperature", "mogreps_uk_surface_temperature.json", "data/mogreps/MOGREPS-UK__surface_temperature_2020-07-19T14:00:00Z.nc", "e9ba61dd6230adfb26353400a2128cd05ce98598.nc", "MOGREPS-UK/surface_temperature/2020/m07/d19/h14/MOGREPS-UK__surface_temperature__2020-07-19T14__2020-07-22T19.zarr"),
+    ("surface_downwelling_shortwave_flux_in_air", "mogreps_uk_surface_downwelling_shortwave_flux_in_air.json", "data/mogreps/MOGREPS-UK__surface_downwelling_shortwave_flux_in_air_2020-07-26T13:00:00Z.nc", "f69b4ba950e208f6c27894fc4276fac75d9bdd4d.nc", "MOGREPS-UK/surface_downwelling_shortwave_flux_in_air/2020/m07/d26/h13/MOGREPS-UK__surface_downwelling_shortwave_flux_in_air__2020-07-26T13__2020-07-27T17.zarr")
+]
+
+not_wanted_messages = [
+    # ("var_name", "sns_message_filename", "netcdf_path", "netcdf_name"),
+    ("wind_speed_of_gust", "mogreps_uk_wind_speed_of_gust_10m.json", "data/mogreps/MOGREPS-UK__wind_speed_of_gust_2020-07-26T13:00:00Z.nc", "4ed0d74c22d80932711becbebf221dd769941a3b.nc"),
 ]
 
 
-def test_handles_air_temperature_message(queue, s3, caplog):
+@pytest.mark.parametrize("var_name,sns_message_filename,netcdf_path,netcdf_name,dest_filename", test_input)
+def test_handles_some_message_types(queue, s3, caplog, var_name, sns_message_filename, netcdf_path, netcdf_name, dest_filename):
     # MOCKING
-    mogreps_uk_air_temperature_1_5m = load_sqs_message_from_file("data/sns_messages/mogreps_uk_air_temperature_1-5m.json")
+    mogreps_uk_air_temperature_1_5m = load_sqs_message_from_file(f"data/sns_messages/{sns_message_filename}")
     queue.send_message(MessageBody=mogreps_uk_air_temperature_1_5m)
 
     BUCKET_NAME = 'aws-earth-mo-atmospheric-mogreps-uk-prd'
     s3.Bucket(BUCKET_NAME).create()
-    s3.Bucket(BUCKET_NAME).upload_file('data/mogreps/MOGREPS-UK__air_temperature_2020-07-16T14:00:00Z.nc', '9a9d4d6889c99285ae4efa76802ccb0ccb96e3c4.nc')
+    s3.Bucket(BUCKET_NAME).upload_file(netcdf_path, netcdf_name)
 
     output_bucket = s3.Bucket("uk-metoffice-nwp")
     output_bucket.create()
@@ -72,7 +80,7 @@ def test_handles_air_temperature_message(queue, s3, caplog):
 
     # ASSERTIONS
     assert "1 sqs messages received" in caplog.text
-    assert "Loading SQS message 1/1: var_name=air_temperature;" in caplog.text
+    assert f"Loading SQS message 1/1: var_name={var_name};" in caplog.text
     assert "Message is wanted!  Loading NetCDF file..." in caplog.text
 
     assert "Opening xarray Dataset" in caplog.text
@@ -85,7 +93,7 @@ def test_handles_air_temperature_message(queue, s3, caplog):
         print(my_bucket_object)
 
     # Ensure Zarr got uploaded
-    key = 'MOGREPS-UK/air_temperature/2020/m07/d16/h14/MOGREPS-UK__air_temperature__2020-07-16T14__2020-07-17T00.zarr'
-    assert len(list(output_bucket.objects.filter(Prefix=key))) > 0
+    # key = 'MOGREPS-UK/air_temperature/2020/m07/d16/h14/MOGREPS-UK__air_temperature__2020-07-16T14__2020-07-17T00.zarr'
+    assert len(list(output_bucket.objects.filter(Prefix=dest_filename))) > 0
 
     assert "Message finished." in caplog.text
