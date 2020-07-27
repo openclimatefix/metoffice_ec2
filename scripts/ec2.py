@@ -141,7 +141,7 @@ def loop():
                 delete_message(sqs, sqs_message)
 
             time_end = time.time()
-            _LOG.info("Took %d seconds", time_end - time_start)
+            _LOG.info("Message finished. Took %d seconds", time_end - time_start)
         else:
             _LOG.info("Message not wanted.")
             delete_message(sqs, sqs_message)
