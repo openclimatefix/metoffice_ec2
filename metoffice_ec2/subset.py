@@ -12,14 +12,18 @@ import xarray as xr
 
 def subset(
     dataset: xr.Dataset,
-    height_meters: Optional[List[int]] = None,
+    height_meters: Optional[Union[float, List[float]]] = None,
     north: Optional[float] = None,
     east: Optional[float] = None,
     south: Optional[float] = None,
     west: Optional[float] = None,
 ) -> xr.Dataset:
 
-    if height_meters is not None:
+    if (
+        height_meters is not None
+        and not isinstance(height_meters, float)
+        and len(height_meters) > 1
+    ):
         dataset = dataset.sel(height=height_meters)
 
     return dataset.loc[
