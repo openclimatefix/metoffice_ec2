@@ -1,0 +1,25 @@
+{
+    "Type": "Notification",
+    "MessageId": "3138d024-d872-5760-a33b-87bc294ce608",
+    "TopicArn": "arn:aws:sns:eu-west-2:021908831235:aws-earth-mo-atmospheric-mogreps-uk-prd",
+    "Message": "{\"model\": \"mo-atmospheric-mogreps-uk-prd\", \"object_size\": 7760046.0, \"forecast_reference_time\": \"2020-07-26T13:00:00Z\", \"forecast_period\": \"100800\", \"forecast_period_units\": \"seconds\", \"ttl\": 1596467579, \"time\": \"2020-07-27T17:00:00Z\", \"bucket\": \"aws-earth-mo-atmospheric-mogreps-uk-prd\", \"key\": \"f69b4ba950e208f6c27894fc4276fac75d9bdd4d.nc\", \"created_time\": \"2020-07-26T15:05:08Z\", \"name\": \"surface_downwelling_shortwave_flux_in_air\", \"realization\": \"23 24 25\"}",
+    "Timestamp": "2020-07-27T15:13:02.891Z",
+    "SignatureVersion": "1",
+    "Signature": "FhPOtqS4olunN2ttVvgVzLES6DIaEzQ6XodJu6DAEcUcEnXXX1mo/c9uPhfcB6+Roi81I/tZPyaVIOWfp9UBRVj4k/pudsXmTRP5e0g2amShCvE6FEpOXXC54uOY43/bsrA6fJSmxZ1WWFEwMj6POF7xhcrtLPhrYps0PyeHGApweBlG8VsKNkAuAvvcsYR62CwlQvWxxopJgIeh+m9P4rCmKIjX4p9fIZP41C6wnJEPhfS0Z+/wnsbxHEHBUehXdzdUXXQGkKXu/CoyXfwpN93Tszq5h8wihvSvJ17VdcDEqzcSkwVojAjj3IJu+FNqM9mtfE8bG540cDF4rTWKHw==",
+    "SigningCertURL": "https://sns.eu-west-2.amazonaws.com/SimpleNotificationService-a86cb10b4e1f29c941702d737128f7b6.pem",
+    "UnsubscribeURL": "https://sns.eu-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-2:021908831235:aws-earth-mo-atmospheric-mogreps-uk-prd:86762de0-d80d-4985-8315-5cc7e9790177",
+    "MessageAttributes": {
+      "forecast_reference_time": {
+        "Type": "String",
+        "Value": "2020-07-26T13:00:00Z"
+      },
+      "name": {
+        "Type": "String",
+        "Value": "surface_downwelling_shortwave_flux_in_air"
+      },
+      "model": {
+        "Type": "String",
+        "Value": "mo-atmospheric-mogreps-uk-prd"
+      }
+    }
+  }

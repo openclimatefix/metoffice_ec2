@@ -7,6 +7,7 @@ import boto3
 import pandas as pd
 import s3fs
 import sentry_sdk
+
 from metoffice_ec2 import message, subset
 from metoffice_ec2.timer import Timer
 
@@ -24,11 +25,11 @@ DEST_BUCKET = os.getenv("DEST_BUCKET", DEST_BUCKET_DEFAULT)
 
 REGION = "eu-west-1"
 
-# Remember to update infrastructure/inputs.tf as well, when modifying this.
 WIND_HEIGHTS_METERS = [10, 50, 100, 150]  # Heights for wind power forecasting.
 
 # DataFrame with index 'name' column 'height' (vertical levels in meters).
 # 'height' should be a list of numbers.
+# Remember to update infrastructure/inputs.tf as well, when modifying this.
 PARAMS_TO_COPY = pd.DataFrame(
     [
         # For wind power forecasting:
@@ -141,7 +142,7 @@ def loop():
                 delete_message(sqs, sqs_message)
 
             time_end = time.time()
-            _LOG.info("Took %d seconds", time_end - time_start)
+            _LOG.info("Message finished. Took %d seconds", time_end - time_start)
         else:
             _LOG.info("Message not wanted.")
             delete_message(sqs, sqs_message)
