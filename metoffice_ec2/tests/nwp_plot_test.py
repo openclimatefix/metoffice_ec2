@@ -2,15 +2,15 @@ import imghdr
 from pathlib import Path
 
 from fsspec.implementations.local import LocalFileSystem
+from zarr.storage import ZipStore
+
+import xarray as xr
 from metoffice_ec2.nwp_plot import (
     extract_wind_from_direction,
     filename_for_plot,
     find_zarr,
     plot_xarray_data_array,
 )
-from zarr.storage import ZipStore
-
-import xarray as xr
 
 
 def test_local_plot_pipeline(tmp_path):

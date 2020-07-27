@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import IO, Any, List, Union
 
-import cartopy.crs as ccrs
 import fsspec
-import matplotlib.pyplot as plt
+from cartopy import crs as ccrs
+from matplotlib import pyplot as plt
 
 import xarray as xr
 
