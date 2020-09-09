@@ -1,4 +1,4 @@
-name: Publish to Docker Registry
+name: Publish to Docker and Sentry Registry
 on:    
   release:
       types: [published]
@@ -17,3 +17,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tags: "latest,${{ env.RELEASE_VERSION }}"
+    - name: Create Sentry release
+      uses: getsentry/action-release@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: "open-climate-fix"
+        SENTRY_PROJECT: "metoffice_ec2"
+      with:
+        environment: production
+        version: ${{ env.RELEASE_VERSION }}
