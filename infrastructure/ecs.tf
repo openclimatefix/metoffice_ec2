@@ -74,7 +74,8 @@ resource "aws_iam_policy" "metoffice_task_policy" {
                 "s3:DeleteObject"
             ],
             "Resource": [
-                "${aws_s3_bucket.output.arn}/*.zattrs"
+                "${aws_s3_bucket.output.arn}/*.zattrs",
+                "${aws_s3_bucket.output.arn}/*.zgroup"
             ]
         }
     ]
