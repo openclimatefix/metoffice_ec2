@@ -84,7 +84,7 @@ Format the code with `black metoffice_ec2 scripts`.
 
 Check coding style with `flake8`.
 
-Fix import order with `isort -rc .`.
+Fix import order with `isort .`.
 
 Run static type checking with `mypy metoffice_ec2 scripts`.
 
