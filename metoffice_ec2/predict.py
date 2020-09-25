@@ -12,6 +12,8 @@ def load_model(path: str) -> pd.DataFrame:
 
 def load_irradiance_data(path: str) -> xr.Dataset:
     """Load the NWP irradiance data"""
+    if ".zarr" in path:
+        return xr.open_zarr(path)
     return xr.open_dataset(path, engine="netcdf4")
 
 
@@ -29,6 +31,10 @@ def predict(irradiance_dataset: xr.Dataset, model_df: pd.DataFrame) -> pd.DataFr
         coords=[model_df["system_id"].values],
         dims="system_id",
     )
+    # MOGREPS has multiple realizations (UKV doesn't)
+    if "realization" in irradiance_dataset:
+        # just get the first realization
+        irradiance_dataset = irradiance_dataset.isel(realization=0)
     nwp_interp = irradiance_dataset.interp(
         projection_x_coordinate=easting, projection_y_coordinate=northing
     )

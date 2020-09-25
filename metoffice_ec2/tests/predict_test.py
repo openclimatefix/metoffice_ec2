@@ -25,3 +25,19 @@ def test_predict():
     # import geojson
     # with open("predictions_2020-06-04T17.geojson", 'w') as f:
     #     geojson.dump(feature_collection, f, indent=4)
+
+
+def test_predict_zarr():
+    irradiance_dataset = load_irradiance_data(
+        "data/mogreps/MOGREPS-UK__surface_downwelling_shortwave_flux_in_air__2020-09-08T12__2020-09-08T13.zarr.zip"
+    )
+    model_df = load_model("model/predict_pv_yield_nwp.csv")
+    predictions = predict(irradiance_dataset, model_df)
+    assert predictions.at[0, "pv_yield_predicted"] > 0
+
+    feature_collection = predict_as_geojson(irradiance_dataset, model_df)
+    feature0 = feature_collection["features"][0]
+    assert feature0["geometry"]["coordinates"] == [-1.299834, 54.3686]
+    assert feature0["properties"]["system_id"] == 973
+    assert feature0["properties"]["time"] == "2020-09-08T13:00:00"
+    assert feature0["properties"]["pv_yield_predicted"] > 0
