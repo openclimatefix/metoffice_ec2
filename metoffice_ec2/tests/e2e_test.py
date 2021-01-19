@@ -167,7 +167,13 @@ not_wanted_messages = [
     "var_name,sns_message_filename,netcdf_path,netcdf_name", not_wanted_messages
 )
 def test_handles_unwanted_messages(
-    queue, s3, caplog, var_name, sns_message_filename, netcdf_path, netcdf_name,
+    queue,
+    s3,
+    caplog,
+    var_name,
+    sns_message_filename,
+    netcdf_path,
+    netcdf_name,
 ):
     # MOCKING
     sns_message = load_sns_message_from_file(

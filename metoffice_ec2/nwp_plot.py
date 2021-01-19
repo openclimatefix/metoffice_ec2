@@ -35,12 +35,12 @@ def plot_xarray_data_array(
     dataset: xr.Dataset, da: xr.DataArray, file: IO[Any]
 ) -> None:
     """Create an image plot for a data array"""
-    central_latitude = dataset.lambert_azimuthal_equal_area.latitude_of_projection_origin[
-        0
-    ]
-    central_longitude = dataset.lambert_azimuthal_equal_area.longitude_of_projection_origin[
-        0
-    ]
+    central_latitude = (
+        dataset.lambert_azimuthal_equal_area.latitude_of_projection_origin[0]
+    )
+    central_longitude = (
+        dataset.lambert_azimuthal_equal_area.longitude_of_projection_origin[0]
+    )
     mogreps_crs = ccrs.LambertAzimuthalEqualArea(
         central_latitude=central_latitude, central_longitude=central_longitude
     )
