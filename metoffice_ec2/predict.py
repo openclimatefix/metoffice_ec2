@@ -1,6 +1,8 @@
+from datetime import datetime, timezone
+import math
+
 import pandas as pd
 from geojson import Feature, FeatureCollection, Point
-
 import xarray as xr
 
 
@@ -61,7 +63,9 @@ def predict_as_geojson(
 ) -> FeatureCollection:
     """Predict PV yield for PV systems with irradiance values in irradiance_dataset, and return a GeoJSON FeatureCollection"""
     rows = predict(irradiance_dataset, model_df).to_dict("records")
-    feature_collection = FeatureCollection([_to_geojson_feature(row) for row in rows])
+    feature_collection = FeatureCollection([_to_geojson_feature(row) for row in rows], properties={
+        "forecastCreationTime": datetime.now(timezone.utc).isoformat()
+    })
     return feature_collection
 
 
@@ -70,7 +74,8 @@ def _to_geojson_feature(row):
         geometry=Point((row["longitude"], row["latitude"])),
         properties={
             "system_id": row["system_id"],
-            "time": row["time"].isoformat(),
-            "pv_yield_predicted": row["pv_yield_predicted"],
+            "forecastTime": row["time"].isoformat(),
+            # TODO(#50): Remove the nan check once issue is fixed
+            "pv_yield_predicted": None if math.isnan(row["pv_yield_predicted"]) else row["pv_yield_predicted"],
         },
     )

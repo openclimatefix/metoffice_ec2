@@ -4,7 +4,7 @@ FROM continuumio/miniconda3
 # Make logs show up immediately, not only after loop finishes
 ENV PYTHONUNBUFFERED 1
 ENV SENTRY_ENV production
-ENV RELEASE_VERSION v1.4.5
+ENV RELEASE_VERSION v1.5.0
 
 # Set the working directory.
 WORKDIR /usr/src/app
