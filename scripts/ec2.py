@@ -2,14 +2,20 @@
 import logging
 import os
 import time
+from datetime import datetime, timezone
 
 import boto3
 import pandas as pd
 import s3fs
 import sentry_sdk
+import geojson
 
 from metoffice_ec2 import message, subset
 from metoffice_ec2.timer import Timer
+from metoffice_ec2.predict import (
+    load_model,
+    predict_as_geojson,
+)
 
 sentry_sdk.init(
     "https://4e4ddd1fa2aa4353bd904fa74852913e@o400768.ingest.sentry.io/5259484",
@@ -22,6 +28,8 @@ SQS_URL = os.getenv("SQS_URL", SQS_URL_DEFAULT)
 
 DEST_BUCKET_DEFAULT = "uk-metoffice-nwp"
 DEST_BUCKET = os.getenv("DEST_BUCKET", DEST_BUCKET_DEFAULT)
+
+PREDICTIONS_BUCKET = "ocf-forecasting-data"
 
 REGION = "eu-west-1"
 
@@ -94,12 +102,38 @@ def load_subset_and_save_data(mo_message, height_meters, s3):
     else:
         timer.tick("Compressing & writing Zarr file to S3")
         _LOG.info("SUCCESS! dest_url=%s", full_zarr_filename)
+        run_inference(dataset)
 
 
 def delete_message(sqs, sqs_message):
     receipt_handle = sqs_message["ReceiptHandle"]
     _LOG.info("Deleting message with ReceiptHandle=" + receipt_handle)
     sqs.delete_message(QueueUrl=SQS_URL, ReceiptHandle=receipt_handle)
+
+
+def run_inference(dataset):
+    variable_name = subset.get_variable_name(dataset)
+    if variable_name != 'surface_downwelling_shortwave_flux_in_air':
+        _LOG.info("Not running inference for variable %s", variable_name)
+        return
+    
+    _LOG.info("Starting inference for variable %s", variable_name)
+    
+    # Load model
+    model_df = load_model("model/predict_pv_yield_nwp.csv")
+
+    # predict_as_geojson
+    feature_collection = predict_as_geojson(dataset, model_df)
+
+    # Save
+    timestamp_now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+    s3 = boto3.client('s3')
+    s3.put_object(
+        Bucket=PREDICTIONS_BUCKET,
+        Key=f'nwp/predictions_{timestamp_now}.geojson',
+        Body=geojson.dumps(feature_collection, indent=4)
+    )
+    _LOG.info("SUCCESS! Saved predictions to bucket %s", PREDICTIONS_BUCKET)
 
 
 def loop():

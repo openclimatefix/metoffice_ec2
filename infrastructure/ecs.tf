@@ -53,7 +53,8 @@ resource "aws_iam_policy" "metoffice_task_policy" {
                 "s3:ListBucket"
             ],
             "Resource": [
-                "${aws_s3_bucket.output.arn}"
+                "${aws_s3_bucket.output.arn}",
+                "arn:aws:s3:::ocf-forecasting-data"
             ]
         },
         {
@@ -64,7 +65,8 @@ resource "aws_iam_policy" "metoffice_task_policy" {
                 "s3:GetObject"
             ],
             "Resource": [
-                "${aws_s3_bucket.output.arn}/*"
+                "${aws_s3_bucket.output.arn}/*",
+                "arn:aws:s3:::ocf-forecasting-data/*"
             ]
         },
         {
